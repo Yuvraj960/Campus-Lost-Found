@@ -152,3 +152,27 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Deviations from docs: None.
 - Follow-ups: Proceed to Phase 9 (`phase/9-quality`) for quality pass, frontend test harness, security audit, and bug fixing.
 
+## 2026-09-28 — Phase 9 — Testing, security, bug fixing
+- Conducted full security audit against `.agents/rules/30-security.md` and generated `docs/SECURITY_AUDIT.md`:
+  - Verified password hashing cost 12, JWT HS256 payload scoping, generic login errors without user enumeration, and suspended user ejection.
+  - Verified contact details privacy (phone/email strictly concealed until claim approved on both item and claim endpoints).
+  - Verified NoSQL / ReDoS query sanitization with `escapeRegex` and Zod `.strict()` validation.
+  - Ran `npm audit` across monorepo root, server, and client; verified zero Critical or High severity vulnerabilities.
+- Resolved Security Findings (SEC-01 & SEC-02):
+  - Defined and mounted `globalLimiter` (100 requests / 15 minutes / IP) in `server/src/app.js`.
+  - Defined `mutationLimiter` (20 requests / 15 minutes / IP) in `server/src/middleware/rateLimiter.js` and attached to `POST /api/items`, `POST /api/claims`, and `POST /api/reports`.
+- Improved Frontend Accessibility & Form Testing:
+  - Enhanced `Input.jsx`, `Select.jsx`, and `Textarea.jsx` to auto-slugify labels to `id` and `htmlFor` when explicit IDs are not provided, ensuring form controls are accessible.
+  - Added `htmlFor="description"` in `ReportItem.jsx`.
+- Implemented Frontend Unit & Integration Test Suites (Vitest + React Testing Library):
+  - `client/src/components/__tests__/ItemCard.test.jsx` (5 tests): verifies title, location, category, date formatting, type badges (Lost/Found), status badge, link target, and fallback placeholder.
+  - `client/src/components/__tests__/FilterPanel.test.jsx` (4 tests): verifies rendering of all filter controls, `onChange` triggers on select changes, and `onReset` invocation.
+  - `client/src/components/__tests__/ClaimModal.test.jsx` (3 tests): verifies modal inputs, minimum 10-char validation on message/proof, and successful submission via `claimService.createClaim`.
+  - `client/src/routes/__tests__/guards.test.jsx` (7 tests): verifies `ProtectedRoute` redirecting guests to `/login`, `AdminRoute` redirecting students to `/dashboard`, and `GuestRoute` redirecting authenticated users to `/dashboard`.
+  - `client/src/pages/__tests__/Login.test.jsx` (4 tests): verifies email/password validation, submission calling `useAuth().login`, navigation with redirect param, and quick demo credentials prefill.
+  - `client/src/pages/__tests__/ReportItem.test.jsx` (4 tests): verifies field rendering, validation error states, AI assist recommendation integration, and submission calling `itemService.createItem`.
+- Full test suite now passes with 113 total automated tests (85 backend + 28 frontend), zero lint warnings/errors, and clean production build.
+- Deviations from docs: None.
+- Follow-ups: Proceed to Phase 10 (`phase/10-ship`) for Docker setup, CI workflow, UI audit pass, and README documentation.
+
+

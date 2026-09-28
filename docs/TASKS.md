@@ -73,10 +73,10 @@ Verify: admin sees stats matching DB; suspend user blocks login; remove item hid
 
 ## Phase 9 — Testing, security, bug fixing  (`phase/9-quality`)
 Read: rules/30-security.md, `.agents/workflows/write-tests.md`, `security-audit.md`
-- [ ] Backend Jest+Supertest suites (auth, items, claims, notifications, matching, admin) with mocked Cloudinary/Gemini
-- [ ] Frontend Vitest+RTL (Login, ReportItem, ItemCard, FilterPanel, ClaimModal, route guards)
-- [ ] Run `/security-audit`, fix Critical/High findings; `npm audit`
-- [ ] Fix all bugs found; coverage report
+- [x] Backend Jest+Supertest suites (auth, items, claims, notifications, matching, admin) with mocked Cloudinary/Gemini
+- [x] Frontend Vitest+RTL (Login, ReportItem, ItemCard, FilterPanel, ClaimModal, route guards)
+- [x] Run `/security-audit`, fix Critical/High findings; `npm audit`
+- [x] Fix all bugs found; coverage report
 Verify: `npm test` green; no Critical/High findings open.
 
 ## Phase 10 — Polish, Docker, CI & deployment  (`phase/10-ship`)
