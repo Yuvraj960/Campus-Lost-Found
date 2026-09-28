@@ -3,6 +3,8 @@ import { ApiError } from '../utils/ApiError.js';
 import { generateToken } from '../utils/jwt.js';
 import { env } from '../config/env.js';
 import { ROLE, USER_STATUS } from '../constants/enums.js';
+import { imageService } from './imageService.js';
+import { logger } from '../utils/logger.js';
 
 export const authService = {
   /**
@@ -95,7 +97,20 @@ export const authService = {
     const filteredUpdates = {};
     for (const key of allowedUpdates) {
       if (updates[key] !== undefined) {
-        filteredUpdates[key] = updates[key];
+        if (key === 'profileImage' && typeof updates[key] === 'string') {
+          filteredUpdates[key] = { url: updates[key], publicId: '' };
+        } else {
+          filteredUpdates[key] = updates[key];
+        }
+      }
+    }
+
+    if (filteredUpdates.profileImage) {
+      const existingUser = await User.findById(userId);
+      if (existingUser?.profileImage?.publicId) {
+        await imageService.delete(existingUser.profileImage.publicId).catch((err) => {
+          logger.warn(`Failed to delete previous avatar from Cloudinary: ${err.message}`);
+        });
       }
     }
 

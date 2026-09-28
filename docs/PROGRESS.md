@@ -74,3 +74,25 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Created comprehensive integration test suites: `claims.test.js` (6 tests) and `notifications.test.js` (3 tests). Monorepo test suite now at 45 passing tests.
 - Deviations from docs: None.
 - Follow-ups: Proceed to Phase 6 (`phase/6-uploads`) for Cloudinary image uploads and delete cleanup.
+
+## 2026-09-28 — Phase 6 — Image uploads (Cloudinary)
+- Configured Cloudinary v2 SDK in `server/src/config/cloudinary.js` with fallback detection (`isCloudinaryConfigured`) and structured logging.
+- Implemented `server/src/services/imageService.js` (`uploadOne`, `uploadMany`, `delete`, `deleteMany`):
+  - Streams memory buffers to Cloudinary via `upload_stream`.
+  - In development/test or when credentials are not configured, falls back to deterministic placeholder URLs (`picsum.photos`) without crashing requests.
+  - Implements rollback cleanup in `uploadMany` if an upload fails midway through a batch.
+- Configured `multer` memory storage upload middleware in `server/src/middleware/upload.js` (`uploadItemImages`, `uploadProfileImage`, `processItemImages`, `processProfileImage`):
+  - Enforces strict JPEG, PNG, and WebP MIME validation.
+  - Enforces 5 MB per file size limit.
+  - Enforces max 5 images per item.
+  - Standardized error handling in `server/src/middleware/error.js` mapping `LIMIT_FILE_SIZE` and `LIMIT_UNEXPECTED_FILE` / `LIMIT_FILE_COUNT` to standard 400 `VALIDATION_ERROR` envelopes.
+- Mounted profile image upload middleware on `PATCH /api/auth/me` with Zod schema support for both object and string URLs. Updated `authService.updateMe` to automatically clean up previously attached Cloudinary avatars when a user updates their photo.
+- Integrated Cloudinary asset deletion in `itemService.deleteItem` (cleans up all associated image publicIds) and `itemService.updateItem` (supports `removeImageIds` to delete replaced images).
+- Updated frontend client:
+  - Added avatar photo upload action to `Profile.jsx` using `FormData` and `useAuth().updateUser`.
+  - Added `loading="lazy"` attribute to main and thumbnail images in `ImageGallery.jsx`.
+  - Updated `authService.updateMe` to support multipart/form-data payloads.
+- Added comprehensive integration test suite `server/tests/uploads.test.js` (7 tests) validating 1–5 files accepted, 6th file rejected (400 `VALIDATION_ERROR`), non-image formats rejected, >5MB files rejected, item deletion removes Cloudinary assets, and profile avatar upload via `PATCH /api/auth/me`.
+- Full monorepo test suite now passes with 53 tests (52 server + 1 client).
+- Deviations from docs: None.
+- Follow-ups: Proceed to Phase 7 (`phase/7-ai`) for AI matching, heuristic scorer, and assistant endpoint.

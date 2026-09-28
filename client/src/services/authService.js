@@ -81,12 +81,14 @@ export const authService = {
       const userId = localStorage.getItem('mock_user_id') || 'user-student-1';
       const userIdx = mockUsers.findIndex((u) => u.id === userId);
       if (userIdx !== -1) {
-        mockUsers[userIdx] = { ...mockUsers[userIdx], ...updates };
+        const parsed = updates instanceof FormData ? Object.fromEntries(updates.entries()) : updates;
+        mockUsers[userIdx] = { ...mockUsers[userIdx], ...parsed };
         return { user: mockUsers[userIdx] };
       }
       return { user: mockUsers[1] };
     }
-    const res = await api.patch('/auth/me', updates);
+    const headers = updates instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
+    const res = await api.patch('/auth/me', updates, { headers });
     return res.data;
   },
 

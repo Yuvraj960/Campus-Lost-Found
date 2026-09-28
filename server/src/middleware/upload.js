@@ -1,7 +1,8 @@
 import multer from 'multer';
 import { ApiError } from '../utils/ApiError.js';
+import { imageService } from '../services/imageService.js';
 
-// Memory storage keeps file buffers in memory for processing or Cloudinary upload
+// Memory storage keeps file buffers in memory for processing or Cloudinary streaming
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
@@ -23,45 +24,55 @@ const upload = multer({
 });
 
 export const uploadItemImages = upload.array('images', 5);
+export const uploadProfileImage = upload.single('profileImage');
 
 /**
- * Middleware that normalizes req.body.images whether sent as multipart files or JSON.
- * Before Phase 6 (Cloudinary), uploaded files generate placeholder image objects.
+ * Middleware that processes item images uploaded via multer or sent as JSON.
+ * Uploads buffers via imageService to Cloudinary (or dev fallback).
  */
-export const processItemImages = (req, res, next) => {
+export const processItemImages = async (req, res, next) => {
   try {
-    // If files were uploaded via multer
+    let uploadedImages = [];
     if (req.files && req.files.length > 0) {
-      const generatedImages = req.files.map((file, idx) => ({
-        url: `https://picsum.photos/seed/${Date.now()}-${idx}/600/400`,
-        publicId: `local-placeholder-${Date.now()}-${idx}`,
-      }));
-
-      // Combine with existing images if any
-      let existingImages = [];
-      if (req.body.images) {
-        if (typeof req.body.images === 'string') {
-          try {
-            existingImages = JSON.parse(req.body.images);
-          } catch {
-            existingImages = [];
-          }
-        } else if (Array.isArray(req.body.images)) {
-          existingImages = req.body.images;
-        }
-      }
-
-      req.body.images = [...existingImages, ...generatedImages].slice(0, 5);
-    } else if (typeof req.body.images === 'string') {
-      try {
-        req.body.images = JSON.parse(req.body.images);
-      } catch {
-        req.body.images = [];
-      }
-    } else if (!req.body.images) {
-      req.body.images = [];
+      uploadedImages = await imageService.uploadMany(req.files, 'campus-lost-found/items');
     }
 
+    // Parse existing images if passed in body
+    let existingImages = [];
+    if (req.body.images) {
+      if (typeof req.body.images === 'string') {
+        try {
+          existingImages = JSON.parse(req.body.images);
+        } catch {
+          existingImages = [];
+        }
+      } else if (Array.isArray(req.body.images)) {
+        existingImages = req.body.images;
+      }
+    }
+
+    req.body.images = [...existingImages, ...uploadedImages].slice(0, 5);
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Middleware that processes profile image uploaded via multer.
+ */
+export const processProfileImage = async (req, res, next) => {
+  try {
+    if (req.file) {
+      const uploaded = await imageService.uploadOne(req.file, 'campus-lost-found/profiles');
+      req.body.profileImage = uploaded;
+    } else if (typeof req.body.profileImage === 'string') {
+      try {
+        req.body.profileImage = JSON.parse(req.body.profileImage);
+      } catch {
+        // String URL or plain value
+      }
+    }
     next();
   } catch (err) {
     next(err);

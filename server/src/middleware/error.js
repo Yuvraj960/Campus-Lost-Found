@@ -48,7 +48,7 @@ export const errorHandler = (err, req, res, _next) => {
     code = 'VALIDATION_ERROR';
     if (err.code === 'LIMIT_FILE_SIZE') {
       message = 'File size exceeds allowed limit (5 MB)';
-    } else if (err.code === 'LIMIT_FILE_COUNT') {
+    } else if (err.code === 'LIMIT_FILE_COUNT' || err.code === 'LIMIT_UNEXPECTED_FILE') {
       message = 'Too many files uploaded (max 5)';
     } else {
       message = err.message;

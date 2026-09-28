@@ -7,6 +7,7 @@ import { escapeRegex } from '../utils/escapeRegex.js';
 import { getPaginationParams, formatPaginatedResponse } from '../utils/pagination.js';
 import { ITEM_STATUS, CLAIM_STATUS, NOTIF_TYPE } from '../constants/enums.js';
 import { notificationService } from './notificationService.js';
+import { imageService } from './imageService.js';
 
 export const itemService = {
   getItems: async (query = {}, currentUser = null) => {
@@ -211,6 +212,28 @@ export const itemService = {
       throw ApiError.conflict('Only ACTIVE items can be updated');
     }
 
+    // Handle removing selected images
+    if (data.removeImageIds && Array.isArray(data.removeImageIds)) {
+      const toRemove = data.removeImageIds;
+      const imagesToDelete = (item.images || []).filter(
+        (img) => toRemove.includes(img.publicId) || toRemove.includes(img._id?.toString())
+      );
+      item.images = (item.images || []).filter(
+        (img) => !toRemove.includes(img.publicId) && !toRemove.includes(img._id?.toString())
+      );
+      const publicIds = imagesToDelete.map((img) => img.publicId).filter(Boolean);
+      if (publicIds.length > 0) {
+        await imageService.deleteMany(publicIds);
+      }
+      delete data.removeImageIds;
+    }
+
+    // Handle adding new uploaded images (total <= 5)
+    if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+      item.images = [...(item.images || []), ...data.images].slice(0, 5);
+      delete data.images;
+    }
+
     Object.assign(item, data);
     await item.save();
 
@@ -293,6 +316,12 @@ export const itemService = {
 
     if (hasApprovedClaim && !isAdmin) {
       throw ApiError.conflict('Cannot delete item with an approved claim');
+    }
+
+    // Delete images from Cloudinary
+    const imagePublicIds = (item.images || []).map((img) => img.publicId).filter(Boolean);
+    if (imagePublicIds.length > 0) {
+      await imageService.deleteMany(imagePublicIds);
     }
 
     // Hard delete item and associated claims/matches

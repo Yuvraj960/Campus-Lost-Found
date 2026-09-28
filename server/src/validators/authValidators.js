@@ -26,5 +26,13 @@ export const updateMeSchema = z.object({
   year: z.coerce.number().int().min(1).max(6).optional(),
   phone: z.string().trim().max(20).optional(),
   studentId: z.string().trim().max(50).optional(),
-  profileImage: z.string().url().max(500).optional(),
+  profileImage: z
+    .union([
+      z.string().url().max(500),
+      z.object({
+        url: z.string().url().max(500),
+        publicId: z.string().optional().default(''),
+      }),
+    ])
+    .optional(),
 }).strict();

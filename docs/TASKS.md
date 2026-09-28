@@ -53,8 +53,8 @@ Verify: user B claims user A's item → A gets notification → approve → B se
 
 ## Phase 6 — Image uploads (Cloudinary)  (`phase/6-uploads`)
 Read: docs/ARCHITECTURE.md (Upload flow), rules/30-security.md (Uploads)
-- [ ] Multer memory upload middleware (type/size/count validation), `imageService` (upload/delete, dev placeholder fallback), cleanup on failure/delete/replace
-- [ ] Profile image upload; `ImageUploader` previews; `ImageGallery` on details; lazy images
+- [x] Multer memory upload middleware (type/size/count validation), `imageService` (upload/delete, dev placeholder fallback), cleanup on failure/delete/replace
+- [x] Profile image upload; `ImageUploader` previews; `ImageGallery` on details; lazy images
 Verify: upload 1–5 images; 6th rejected; non-image and >5 MB rejected with clear errors; delete item removes Cloudinary assets (or logs in fallback mode).
 
 ## Phase 7 — AI matching & assistant  (`phase/7-ai`)

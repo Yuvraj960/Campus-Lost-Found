@@ -22,6 +22,7 @@ export default function ImageGallery({ images = [] }) {
         <img
           src={currentImage.url}
           alt={`Item photo ${selectedIndex + 1}`}
+          loading="lazy"
           className="h-full w-full object-contain"
         />
       </div>
@@ -43,7 +44,7 @@ export default function ImageGallery({ images = [] }) {
                   : 'border-transparent opacity-70 hover:opacity-100'
               }`}
             >
-              <img src={img.url} alt={`Thumbnail ${idx + 1}`} className="h-full w-full object-cover" />
+              <img src={img.url} alt={`Thumbnail ${idx + 1}`} loading="lazy" className="h-full w-full object-cover" />
             </button>
           ))}
         </div>
