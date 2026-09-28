@@ -1,0 +1,68 @@
+import { ROLE, USER_STATUS } from '../constants/enums.js';
+
+export const mockUsers = [
+  {
+    id: 'user-admin-1',
+    name: 'Dr. Sarah Jenkins',
+    email: 'admin@campus.test',
+    studentId: 'FAC-2021',
+    department: 'Campus Administration',
+    year: null,
+    phone: '+1-555-0100',
+    profileImage: {
+      url: 'https://picsum.photos/seed/admin1/200/200',
+      publicId: 'mock/admin1',
+    },
+    role: ROLE.ADMIN,
+    status: USER_STATUS.ACTIVE,
+    createdAt: '2026-08-01T08:00:00.000Z',
+  },
+  {
+    id: 'user-student-1',
+    name: 'John Doe',
+    email: 'john.doe@campus.test',
+    studentId: 'CS2023041',
+    department: 'Computer Science',
+    year: 3,
+    phone: '+1-555-0141',
+    profileImage: {
+      url: 'https://picsum.photos/seed/john1/200/200',
+      publicId: 'mock/john1',
+    },
+    role: ROLE.STUDENT,
+    status: USER_STATUS.ACTIVE,
+    createdAt: '2026-08-15T09:30:00.000Z',
+  },
+  {
+    id: 'user-student-2',
+    name: 'Priya Sharma',
+    email: 'priya.sharma@campus.test',
+    studentId: 'EE2024018',
+    department: 'Electrical Engineering',
+    year: 2,
+    phone: '+1-555-0182',
+    profileImage: {
+      url: 'https://picsum.photos/seed/priya2/200/200',
+      publicId: 'mock/priya2',
+    },
+    role: ROLE.STUDENT,
+    status: USER_STATUS.ACTIVE,
+    createdAt: '2026-08-20T10:15:00.000Z',
+  },
+  {
+    id: 'user-student-3',
+    name: 'Alex Chen',
+    email: 'alex.chen@campus.test',
+    studentId: 'ME2022099',
+    department: 'Mechanical Engineering',
+    year: 4,
+    phone: '+1-555-0199',
+    profileImage: {
+      url: 'https://picsum.photos/seed/alex3/200/200',
+      publicId: 'mock/alex3',
+    },
+    role: ROLE.STUDENT,
+    status: USER_STATUS.ACTIVE,
+    createdAt: '2026-08-25T11:45:00.000Z',
+  },
+];

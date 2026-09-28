@@ -1,0 +1,58 @@
+import { NOTIF_TYPE } from '../constants/enums.js';
+
+export const mockNotifications = [
+  {
+    id: 'notif-1',
+    recipient: 'user-student-2',
+    type: NOTIF_TYPE.CLAIM_RECEIVED,
+    message: 'John Doe submitted a claim for “Found black smartphone on 2nd floor desk”.',
+    link: '/items/item-2',
+    read: false,
+    createdAt: '2026-09-21T09:00:00.000Z',
+  },
+  {
+    id: 'notif-2',
+    recipient: 'user-student-2',
+    type: NOTIF_TYPE.CLAIM_APPROVED,
+    message: 'Your claim for “Grey Herschel backpack with laptop and notebooks” was approved!',
+    link: '/my-claims',
+    read: false,
+    createdAt: '2026-09-25T14:00:00.000Z',
+  },
+  {
+    id: 'notif-3',
+    recipient: 'user-student-1',
+    type: NOTIF_TYPE.MATCH_FOUND,
+    message: 'Possible match found (92% score) for your reported item “Black Samsung Galaxy S23”.',
+    link: '/items/item-1',
+    read: false,
+    createdAt: '2026-09-20T16:35:00.000Z',
+  },
+  {
+    id: 'notif-4',
+    recipient: 'user-student-3',
+    type: NOTIF_TYPE.CLAIM_REJECTED,
+    message: 'Your claim for “Blue metal water bottle found near court benches” was declined.',
+    link: '/my-claims',
+    read: true,
+    createdAt: '2026-09-23T10:00:00.000Z',
+  },
+  {
+    id: 'notif-5',
+    recipient: 'user-student-3',
+    type: NOTIF_TYPE.ITEM_RESOLVED,
+    message: 'Your item “Student ID card in brown leather lanyard” was marked as resolved.',
+    link: '/my-reports',
+    read: true,
+    createdAt: '2026-09-26T10:00:00.000Z',
+  },
+  {
+    id: 'notif-6',
+    recipient: 'user-student-1',
+    type: NOTIF_TYPE.WELCOME,
+    message: 'Welcome to Campus Lost & Found! Report what you lose or find to help your peers.',
+    link: '/dashboard',
+    read: true,
+    createdAt: '2026-08-15T09:30:00.000Z',
+  },
+];

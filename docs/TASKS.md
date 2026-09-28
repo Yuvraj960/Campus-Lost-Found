@@ -13,12 +13,12 @@ Verify: `npm run dev` starts both; `curl localhost:5000/api/health` → ok; clie
 
 ## Phase 1 — Frontend shell with mock data  (`phase/1-frontend-shell`)
 Read: docs/UI_SPEC.md, docs/API_SPEC.md (response shapes), .agents/rules/20-frontend.md
-- [ ] Design tokens, fonts, `components/ui/*`, layouts, Navbar, Sidebar, Footer
-- [ ] Mocks + service layer with `VITE_USE_MOCK` flag; `AuthContext` (mock login/register, persisted)
-- [ ] Pages: Landing, Login, Register, Dashboard, Lost, Found, ItemDetails, ReportItem (lost/found), MyReports, MyClaims, Matches, Notifications, Profile, NotFound
-- [ ] Domain components: ItemCard, SearchBar, FilterPanel, StatusBadge, ImageGallery, ImageUploader, ClaimModal, NotificationBell, MatchCard, EmptyState, Pagination
-- [ ] Route guards `ProtectedRoute`, `AdminRoute`
-- [ ] Admin pages stubbed with mock stats + charts
+- [x] Design tokens, fonts, `components/ui/*`, layouts, Navbar, Sidebar, Footer
+- [x] Mocks + service layer with `VITE_USE_MOCK` flag; `AuthContext` (mock login/register, persisted)
+- [x] Pages: Landing, Login, Register, Dashboard, Lost, Found, ItemDetails, ReportItem (lost/found), MyReports, MyClaims, Matches, Notifications, Profile, NotFound
+- [x] Domain components: ItemCard, SearchBar, FilterPanel, StatusBadge, ImageGallery, ImageUploader, ClaimModal, NotificationBell, MatchCard, EmptyState, Pagination
+- [x] Route guards `ProtectedRoute`, `AdminRoute`
+- [x] Admin pages stubbed with mock stats + charts
 Verify: in browser: Landing → Register/Login → Dashboard → Lost list (filter + search + pagination) → Item details → open Claim modal → Report Lost form validation. No console errors; usable at 320px.
 
 ## Phase 2 — Backend foundation: models, Item CRUD, seed  (`phase/2-backend-core`)

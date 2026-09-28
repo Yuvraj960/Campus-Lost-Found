@@ -1,0 +1,67 @@
+import { MATCH_STATUS } from '../constants/enums.js';
+
+export const mockMatches = [
+  {
+    id: 'match-1',
+    score: 92,
+    reasoning: 'Both listings describe a black Samsung smartphone reported at the Campus Library on the same afternoon.',
+    matchingAttributes: [
+      'Same campus location (Library)',
+      'Matching electronic device brand (Samsung)',
+      'Consistent black color',
+      'Timestamps within 2 hours',
+    ],
+    source: 'GEMINI',
+    status: MATCH_STATUS.SUGGESTED,
+    myItem: {
+      id: 'item-1',
+      title: 'Black Samsung Galaxy S23 with cracked corner',
+      type: 'LOST',
+      category: 'ELECTRONICS',
+      location: 'Library',
+      date: '2026-09-20T14:30:00.000Z',
+      images: [{ url: 'https://picsum.photos/seed/samsung23/600/400' }],
+    },
+    otherItem: {
+      id: 'item-2',
+      title: 'Found black smartphone on 2nd floor desk',
+      type: 'FOUND',
+      category: 'ELECTRONICS',
+      location: 'Library',
+      date: '2026-09-20T16:00:00.000Z',
+      images: [{ url: 'https://picsum.photos/seed/phonespot/600/400' }],
+    },
+    createdAt: '2026-09-20T16:35:00.000Z',
+  },
+  {
+    id: 'match-2',
+    score: 88,
+    reasoning: 'Blue insulated water bottle reported lost and found at the Sports Complex on the evening of Sept 22.',
+    matchingAttributes: [
+      'Same location (Sports Complex)',
+      'Identical color and material (blue metal flask)',
+      'Approximate volume match (32oz)',
+    ],
+    source: 'HEURISTIC',
+    status: MATCH_STATUS.SUGGESTED,
+    myItem: {
+      id: 'item-3',
+      title: 'Blue Hydro Flask water bottle 32oz',
+      type: 'LOST',
+      category: 'SPORTS',
+      location: 'Sports Complex',
+      date: '2026-09-22T17:00:00.000Z',
+      images: [{ url: 'https://picsum.photos/seed/flaskblue/600/400' }],
+    },
+    otherItem: {
+      id: 'item-4',
+      title: 'Blue metal water bottle found near court benches',
+      type: 'FOUND',
+      category: 'SPORTS',
+      location: 'Sports Complex',
+      date: '2026-09-22T19:30:00.000Z',
+      images: [{ url: 'https://picsum.photos/seed/flaskfound/600/400' }],
+    },
+    createdAt: '2026-09-22T20:05:00.000Z',
+  },
+];

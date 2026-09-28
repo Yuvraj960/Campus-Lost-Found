@@ -1,99 +1,116 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { Sparkles, MapPin, Search } from 'lucide-react';
+import { AuthProvider } from './context/AuthContext.jsx';
 
-function Home() {
-  return (
-    <div className="min-h-screen flex flex-col justify-between">
-      <header className="border-b border-slate-200 bg-white shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="h-9 w-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold">
-              CL
-            </div>
-            <span className="font-heading font-bold text-lg text-slate-900 tracking-tight">
-              Campus Lost &amp; Found
-            </span>
-          </div>
-          <nav className="flex items-center space-x-4">
-            <Link
-              to="/lost"
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
-            >
-              Lost Items
-            </Link>
-            <Link
-              to="/found"
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
-            >
-              Found Items
-            </Link>
-            <Link
-              to="/login"
-              className="px-4 py-2 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-colors"
-            >
-              Sign In
-            </Link>
-          </nav>
-        </div>
-      </header>
+// Layouts
+import PublicLayout from './layouts/PublicLayout.jsx';
+import AppLayout from './layouts/AppLayout.jsx';
+import AdminLayout from './layouts/AdminLayout.jsx';
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col items-center justify-center text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold uppercase tracking-wider mb-6">
-          <Sparkles className="w-3.5 h-3.5" />
-          University Lost &amp; Found Portal
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight max-w-2xl">
-          Reuniting students with what they’ve lost.
-        </h1>
-        <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-xl">
-          Report lost belongings, register found items, and let smart matching connect you with the rightful owner on campus.
-        </p>
+// Guards
+import { ProtectedRoute, AdminRoute, GuestRoute } from './routes/guards.jsx';
 
-        <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full max-w-md">
-          <Link
-            to="/report/lost"
-            className="flex-1 py-3 px-4 text-center rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold shadow-xs transition-colors"
-          >
-            I Lost Something
-          </Link>
-          <Link
-            to="/report/found"
-            className="flex-1 py-3 px-4 text-center rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold shadow-xs transition-colors"
-          >
-            I Found Something
-          </Link>
-        </div>
+// Public & Student Pages
+import Landing from './pages/Landing.jsx';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+import BrowseItems from './pages/BrowseItems.jsx';
+import ItemDetails from './pages/ItemDetails.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import ReportItem from './pages/ReportItem.jsx';
+import EditItem from './pages/EditItem.jsx';
+import MyReports from './pages/MyReports.jsx';
+import MyClaims from './pages/MyClaims.jsx';
+import Matches from './pages/Matches.jsx';
+import Notifications from './pages/Notifications.jsx';
+import Profile from './pages/Profile.jsx';
+import NotFound from './pages/NotFound.jsx';
 
-        <div className="mt-12 p-6 bg-white rounded-2xl border border-slate-200 shadow-xs max-w-md w-full text-left">
-          <h2 className="text-sm font-semibold text-slate-800 uppercase tracking-wider flex items-center gap-1.5 mb-2">
-            <Search className="w-4 h-4 text-indigo-600" />
-            Phase 0 Scaffold Active
-          </h2>
-          <p className="text-xs text-slate-500">
-            Frontend shell, Tailwind CSS v4 design tokens, and API client initialized. Ready for Phase 1.
-          </p>
-        </div>
-      </main>
-
-      <footer className="border-t border-slate-200 bg-white py-6">
-        <div className="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 flex items-center justify-center gap-1">
-          <MapPin className="w-3.5 h-3.5 text-slate-400" />
-          Campus Lost &amp; Found &bull; Built for university communities
-        </div>
-      </footer>
-    </div>
-  );
-}
+// Admin Pages
+import AdminOverview from './pages/admin/AdminOverview.jsx';
+import AdminUsers from './pages/admin/AdminUsers.jsx';
+import AdminItems from './pages/admin/AdminItems.jsx';
+import AdminClaims from './pages/admin/AdminClaims.jsx';
+import AdminReports from './pages/admin/AdminReports.jsx';
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Toaster position="top-right" />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="*" element={<Home />} />
-      </Routes>
+      <AuthProvider>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3500,
+            style: {
+              borderRadius: '1rem',
+              background: '#0f172a',
+              color: '#fff',
+              fontSize: '0.875rem',
+            },
+          }}
+        />
+        <Routes>
+          {/* Public Routes with Navbar & Footer */}
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Landing />} />
+            <Route path="/lost" element={<BrowseItems defaultType="LOST" />} />
+            <Route path="/found" element={<BrowseItems defaultType="FOUND" />} />
+            <Route path="/items/:id" element={<ItemDetails />} />
+            <Route
+              path="/login"
+              element={
+                <GuestRoute>
+                  <Login />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <GuestRoute>
+                  <Register />
+                </GuestRoute>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+
+          {/* Student App Routes with Sidebar */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/report/lost" element={<ReportItem forcedType="LOST" />} />
+            <Route path="/report/found" element={<ReportItem forcedType="FOUND" />} />
+            <Route path="/items/:id/edit" element={<EditItem />} />
+            <Route path="/my-reports" element={<MyReports />} />
+            <Route path="/my-claims" element={<MyClaims />} />
+            <Route path="/matches" element={<Matches />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
+
+          {/* Admin Routes with Dark Admin Sidebar */}
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminLayout />
+              </AdminRoute>
+            }
+          >
+            <Route index element={<AdminOverview />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="items" element={<AdminItems />} />
+            <Route path="claims" element={<AdminClaims />} />
+            <Route path="reports" element={<AdminReports />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

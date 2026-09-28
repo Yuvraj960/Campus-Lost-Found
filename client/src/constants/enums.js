@@ -1,0 +1,90 @@
+export const ROLE = Object.freeze({
+  STUDENT: 'STUDENT',
+  ADMIN: 'ADMIN',
+});
+
+export const USER_STATUS = Object.freeze({
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+});
+
+export const ITEM_TYPE = Object.freeze({
+  LOST: 'LOST',
+  FOUND: 'FOUND',
+});
+
+export const ITEM_STATUS = Object.freeze({
+  ACTIVE: 'ACTIVE',
+  CLAIMED: 'CLAIMED',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED',
+});
+
+export const CATEGORY = Object.freeze({
+  ELECTRONICS: 'ELECTRONICS',
+  WALLET_BAGS: 'WALLET_BAGS',
+  KEYS: 'KEYS',
+  ID_DOCUMENTS: 'ID_DOCUMENTS',
+  CLOTHING: 'CLOTHING',
+  BOOKS_STATIONERY: 'BOOKS_STATIONERY',
+  ACCESSORIES: 'ACCESSORIES',
+  SPORTS: 'SPORTS',
+  OTHER: 'OTHER',
+});
+
+export const CATEGORY_LABELS = Object.freeze({
+  ELECTRONICS: 'Electronics',
+  WALLET_BAGS: 'Wallet & Bags',
+  KEYS: 'Keys',
+  ID_DOCUMENTS: 'ID & Documents',
+  CLOTHING: 'Clothing',
+  BOOKS_STATIONERY: 'Books & Stationery',
+  ACCESSORIES: 'Accessories',
+  SPORTS: 'Sports Equipment',
+  OTHER: 'Other',
+});
+
+export const CONTACT_PREF = Object.freeze({
+  EMAIL: 'EMAIL',
+  IN_APP: 'IN_APP',
+});
+
+export const CLAIM_STATUS = Object.freeze({
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  WITHDRAWN: 'WITHDRAWN',
+});
+
+export const MATCH_STATUS = Object.freeze({
+  SUGGESTED: 'SUGGESTED',
+  DISMISSED: 'DISMISSED',
+  CONFIRMED: 'CONFIRMED',
+});
+
+export const NOTIF_TYPE = Object.freeze({
+  CLAIM_RECEIVED: 'CLAIM_RECEIVED',
+  CLAIM_APPROVED: 'CLAIM_APPROVED',
+  CLAIM_REJECTED: 'CLAIM_REJECTED',
+  CLAIM_WITHDRAWN: 'CLAIM_WITHDRAWN',
+  MATCH_FOUND: 'MATCH_FOUND',
+  ITEM_RESOLVED: 'ITEM_RESOLVED',
+  ITEM_REMOVED: 'ITEM_REMOVED',
+  REPORT_UPDATE: 'REPORT_UPDATE',
+  WELCOME: 'WELCOME',
+});
+
+export const REPORT_REASON = Object.freeze({
+  FAKE_LISTING: 'FAKE_LISTING',
+  SPAM: 'SPAM',
+  INAPPROPRIATE: 'INAPPROPRIATE',
+  WRONG_INFO: 'WRONG_INFO',
+  OTHER: 'OTHER',
+});
+
+export const REPORT_STATUS = Object.freeze({
+  PENDING: 'PENDING',
+  REVIEWING: 'REVIEWING',
+  RESOLVED: 'RESOLVED',
+  DISMISSED: 'DISMISSED',
+});
