@@ -3,7 +3,8 @@ import { mockClaims } from '../mocks/claims.js';
 import { mockItems } from '../mocks/items.js';
 import { mockDelay, checkMockError } from '../mocks/mockUtils.js';
 
-const isMock = import.meta.env.VITE_USE_MOCK === 'true';
+// Claims calls real API by default in Phase 5+; falls back to mock if VITE_USE_MOCK_CLAIMS === 'true'
+const isMock = import.meta.env.VITE_USE_MOCK_CLAIMS === 'true';
 
 export const claimService = {
   createClaim: async ({ itemId, message, proof }) => {

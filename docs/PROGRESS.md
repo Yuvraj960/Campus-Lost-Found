@@ -58,3 +58,19 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Added automated integration tests for `owner=me` queries and multipart image uploads.
 - Deviations from docs: None.
 - Follow-ups: Proceed to Phase 5 (`phase/5-claims-notifs`) for claims creation/approval state machine and notifications.
+
+## 2026-09-28 — Phase 5 — Claims, approvals & notifications
+- Implemented `notificationService.js` with fail-safe creation (never crashes callers), paginated list, unread count, single read, and mark-all-read operations.
+- Implemented `notificationController.js` and `notificationRoutes.js` (`/api/notifications/*`).
+- Implemented Zod schemas in `validators/claimValidators.js` (`createClaimSchema`, `updateClaimStatusSchema`).
+- Implemented `claimService.js` with strict state machine rules:
+  - Validates item is `ACTIVE`, prevents self-claims (409), prevents duplicate pending claims per (item, claimant) (409).
+  - Approving a claim transitions item to `CLAIMED`, rejects all other pending claims on the item, and notifies each claimant.
+  - Exposes owner contact details (`name`, `email`, `phone`) on `GET /api/claims/my` only when claim is `APPROVED` (hidden before approval).
+  - Enforces PENDING-only transitions and terminal state immutability.
+- Updated `itemService.updateItemStatus` to notify approved claimants when an item transitions to `RESOLVED`.
+- Mounted `/api/claims` and `/api/notifications` in `server/src/app.js`.
+- Switched client `claimService.js` and `notificationService.js` to real API by default.
+- Created comprehensive integration test suites: `claims.test.js` (6 tests) and `notifications.test.js` (3 tests). Monorepo test suite now at 45 passing tests.
+- Deviations from docs: None.
+- Follow-ups: Proceed to Phase 6 (`phase/6-uploads`) for Cloudinary image uploads and delete cleanup.

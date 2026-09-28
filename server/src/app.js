@@ -6,6 +6,8 @@ import { env } from './config/env.js';
 import { healthRouter } from './routes/health.js';
 import { authRouter } from './routes/authRoutes.js';
 import { itemRouter } from './routes/itemRoutes.js';
+import { claimRouter } from './routes/claimRoutes.js';
+import { notificationRouter } from './routes/notificationRoutes.js';
 import { notFoundHandler } from './middleware/notFound.js';
 import { errorHandler } from './middleware/error.js';
 
@@ -40,6 +42,8 @@ app.use('/api', healthRouter);
 // API routes
 app.use('/api/auth', authRouter);
 app.use('/api/items', itemRouter);
+app.use('/api/claims', claimRouter);
+app.use('/api/notifications', notificationRouter);
 
 // 404 handler
 app.use(notFoundHandler);

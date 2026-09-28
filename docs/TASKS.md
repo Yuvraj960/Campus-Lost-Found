@@ -45,10 +45,10 @@ Verify: create LOST and FOUND items as two users; filters and search work; other
 
 ## Phase 5 — Claims, approvals & notifications  (`phase/5-claims-notifs`)
 Read: docs/API_SPEC.md (Claims, Notifications), rules/10-backend.md (status machines)
-- [ ] Claim create/list/decision/withdraw with all rules (one pending, not own item, ACTIVE only; approval → item CLAIMED + reject others; reject/withdraw approved → item ACTIVE)
-- [ ] `notificationService`; notifications API; polling bell; Notifications page
-- [ ] ClaimModal wired; owner claims panel on ItemDetails; MyClaims with ContactCard on approval; mark RESOLVED flow
-- [ ] Contact privacy enforced end-to-end
+- [x] Claim create/list/decision/withdraw with all rules (one pending, not own item, ACTIVE only; approval → item CLAIMED + reject others; reject/withdraw approved → item ACTIVE)
+- [x] `notificationService`; notifications API; polling bell; Notifications page
+- [x] ClaimModal wired; owner claims panel on ItemDetails; MyClaims with ContactCard on approval; mark RESOLVED flow
+- [x] Contact privacy enforced end-to-end
 Verify: user B claims user A's item → A gets notification → approve → B sees contact, other pending claims rejected, item CLAIMED; A resolves; illegal transitions return 409; contact hidden before approval (check raw JSON).
 
 ## Phase 6 — Image uploads (Cloudinary)  (`phase/6-uploads`)

@@ -5,7 +5,8 @@ import { Match } from '../models/Match.js';
 import { ApiError } from '../utils/ApiError.js';
 import { escapeRegex } from '../utils/escapeRegex.js';
 import { getPaginationParams, formatPaginatedResponse } from '../utils/pagination.js';
-import { ITEM_STATUS, CLAIM_STATUS } from '../constants/enums.js';
+import { ITEM_STATUS, CLAIM_STATUS, NOTIF_TYPE } from '../constants/enums.js';
+import { notificationService } from './notificationService.js';
 
 export const itemService = {
   getItems: async (query = {}, currentUser = null) => {
@@ -242,6 +243,18 @@ export const itemService = {
       }
       item.status = ITEM_STATUS.RESOLVED;
       item.resolvedAt = new Date();
+
+      // Notify approved claimant on RESOLVED
+      const approvedClaim = await Claim.findOne({ item: item._id, status: CLAIM_STATUS.APPROVED });
+      if (approvedClaim) {
+        await notificationService.create({
+          recipient: approvedClaim.claimant,
+          type: NOTIF_TYPE.ITEM_RESOLVED,
+          message: `"${item.title}" has been marked as resolved.`,
+          item: item._id,
+          link: `/items/${item._id}`,
+        });
+      }
     } else if (newStatus === ITEM_STATUS.CLOSED) {
       if (item.status !== ITEM_STATUS.ACTIVE && item.status !== ITEM_STATUS.CLAIMED) {
         throw ApiError.conflict(`Cannot transition item from ${item.status} to CLOSED`);

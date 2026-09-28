@@ -1,8 +1,8 @@
 import api from './api.js';
 import { mockNotifications } from '../mocks/notifications.js';
 import { mockDelay, checkMockError } from '../mocks/mockUtils.js';
-
-const isMock = import.meta.env.VITE_USE_MOCK === 'true';
+// Notifications calls real API by default in Phase 5+; falls back to mock if VITE_USE_MOCK_NOTIFS === 'true'
+const isMock = import.meta.env.VITE_USE_MOCK_NOTIFS === 'true';
 
 export const notificationService = {
   getNotifications: async (params = {}) => {
