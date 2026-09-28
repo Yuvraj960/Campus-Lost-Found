@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Monorepo Dependencies
+        run: |
+          npm ci
+          npm --prefix server ci
+          npm --prefix client ci
+
+      - name: Run Linters
+        run: npm run lint
+
+      - name: Run Test Suites
+        run: npm test
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test_jwt_secret_key_minimum_32_characters_long
+
+      - name: Build Client SPA
+        run: npm run build

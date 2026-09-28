@@ -32,11 +32,13 @@ import AdminUsers from './pages/admin/AdminUsers.jsx';
 import AdminItems from './pages/admin/AdminItems.jsx';
 import AdminClaims from './pages/admin/AdminClaims.jsx';
 import AdminReports from './pages/admin/AdminReports.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
         <Toaster
           position="top-right"
           toastOptions={{
@@ -112,5 +114,6 @@ export default function App() {
         </Routes>
       </AuthProvider>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }

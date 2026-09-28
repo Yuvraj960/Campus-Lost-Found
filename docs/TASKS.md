@@ -81,8 +81,8 @@ Verify: `npm test` green; no Critical/High findings open.
 
 ## Phase 10 — Polish, Docker, CI & deployment  (`phase/10-ship`)
 Read: `.agents/workflows/ui-audit.md`, `ship.md`
-- [ ] `/ui-audit` P0/P1 fixes; a11y pass; favicon/meta tags; 404/500 pages
-- [ ] Dockerfiles (client: build → nginx; server: node slim), `docker-compose.yml` (mongo + server + client), `.dockerignore`
-- [ ] `.github/workflows/ci.yml`: install, lint, test, build on PR/push
-- [ ] README: overview, screenshots, setup, env, scripts, architecture diagram, deploy guide (Atlas + Render/Railway + Vercel/Netlify), demo script and resume blurb
+- [x] `/ui-audit` P0/P1 fixes; a11y pass; favicon/meta tags; 404/500 pages
+- [x] Dockerfiles (client: build → nginx; server: node slim), `docker-compose.yml` (mongo + server + client), `.dockerignore`
+- [x] `.github/workflows/ci.yml`: install, lint, test, build on PR/push
+- [x] README: overview, screenshots, setup, env, scripts, architecture diagram, deploy guide (Atlas + Render/Railway + Vercel/Netlify), demo script and resume blurb
 Verify: `docker compose up --build` runs the full app; CI green; full demo flow works from a clean clone.

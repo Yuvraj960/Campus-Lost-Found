@@ -175,4 +175,23 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Deviations from docs: None.
 - Follow-ups: Proceed to Phase 10 (`phase/10-ship`) for Docker setup, CI workflow, UI audit pass, and README documentation.
 
+## 2026-09-28 — Phase 10 — Polish, Docker, CI & deployment
+- UI Polish, Accessibility & Resilience:
+  - Documented complete viewport and a11y review in `docs/UI_AUDIT.md`.
+  - Created custom SVG campus compass/pin favicon (`client/public/favicon.svg`) and updated `client/index.html` with theme-color, OpenGraph metadata, and SEO descriptions.
+  - Implemented `client/src/components/ErrorBoundary.jsx` and wrapped `App.jsx` to render a 500 recovery view with "Reload Page" and "Campus Home" fallbacks upon any unhandled UI exceptions.
+- Containerization:
+  - Created `server/Dockerfile` using `node:20-alpine`, non-root `USER node`, production layer caching, and port 5000.
+  - Created `client/Dockerfile` (multi-stage build compiling React SPA and serving via `nginx:alpine`) and `client/nginx.conf` with gzip compression, asset caching, and SPA router fallback (`try_files $uri $uri/ /index.html`).
+  - Created `docker-compose.yml` orchestrating MongoDB 7 (`mongo:7-jammy` with health checks), Express API server (`server`), and Nginx frontend (`client`).
+  - Added `.dockerignore` files for root, server, and client.
+- Continuous Integration:
+  - Created GitHub Actions pipeline `.github/workflows/ci.yml` running linting, testing, and production build checks on pushes and pull requests to `main`.
+- Documentation & Shipping:
+  - Wrote comprehensive production `README.md` covering architecture diagram (Mermaid), key features, tech stack, local and Docker quickstart guides, environment variable references, test harness commands, deploy guides (MongoDB Atlas + Render/Railway + Vercel/Netlify), live demo script, and portfolio highlight.
+- Verified test suite (all 113 tests passing), zero lint errors/warnings, and successful production build.
+- Deviations from docs: None.
+- All 11 phases (Phases 0 through 10) are completed.
+
+
 
