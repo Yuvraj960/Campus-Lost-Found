@@ -3,7 +3,8 @@ import { mockItems } from '../mocks/items.js';
 import { mockClaims } from '../mocks/claims.js';
 import { mockDelay, checkMockError } from '../mocks/mockUtils.js';
 
-const isMock = import.meta.env.VITE_USE_MOCK === 'true';
+// Items calls the real backend API by default in Phase 4+; falls back to mock if VITE_USE_MOCK_ITEMS === 'true'
+const isMock = import.meta.env.VITE_USE_MOCK_ITEMS === 'true';
 
 export const itemService = {
   getItems: async (params = {}) => {

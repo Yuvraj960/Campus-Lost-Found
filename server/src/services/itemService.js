@@ -46,7 +46,10 @@ export const itemService = {
     }
 
     // Owner filter
-    if (query.owner === 'me' && currentUser) {
+    if (query.owner === 'me') {
+      if (!currentUser) {
+        throw ApiError.unauthorized('Authentication required to view your listings', 'UNAUTHENTICATED');
+      }
       filter.owner = currentUser._id;
     }
 

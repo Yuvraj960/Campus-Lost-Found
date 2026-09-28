@@ -19,7 +19,7 @@ export default function MyReports() {
     try {
       const data = await itemService.getItems({
         owner: 'me',
-        status: tab === 'RESOLVED' ? 'RESOLVED' : undefined,
+        status: tab === 'RESOLVED' ? 'RESOLVED' : 'ALL',
         type: tab === 'LOST' || tab === 'FOUND' ? tab : undefined,
       });
       setItems(data.items || []);

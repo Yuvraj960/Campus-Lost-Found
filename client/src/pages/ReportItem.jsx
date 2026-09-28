@@ -47,6 +47,7 @@ export default function ReportItem({ forcedType }) {
     register,
     handleSubmit,
     setValue,
+    setError,
     watch,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -102,6 +103,13 @@ export default function ReportItem({ forcedType }) {
       toast.success(`${isLost ? 'Lost report' : 'Found item'} submitted!`);
       navigate('/my-reports');
     } catch (err) {
+      if (err.details && Array.isArray(err.details)) {
+        err.details.forEach((d) => {
+          if (d.path) {
+            setError(d.path, { type: 'server', message: d.message });
+          }
+        });
+      }
       toast.error(err.message || 'Failed to submit report');
     }
   };

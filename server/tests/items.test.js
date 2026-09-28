@@ -334,4 +334,89 @@ describe('Items API', () => {
       expect(res.body.error.code).toBe('CONFLICT');
     });
   });
+
+  describe('GET /api/items?owner=me', () => {
+    beforeEach(async () => {
+      await Item.create([
+        {
+          title: 'My Laptop',
+          description: 'Owner is testUser.',
+          category: CATEGORY.ELECTRONICS,
+          type: ITEM_TYPE.LOST,
+          location: 'Library',
+          date: new Date(),
+          owner: testUser._id,
+          status: ITEM_STATUS.ACTIVE,
+        },
+        {
+          title: 'Others Laptop',
+          description: 'Owner is otherUser.',
+          category: CATEGORY.ELECTRONICS,
+          type: ITEM_TYPE.LOST,
+          location: 'Cafeteria',
+          date: new Date(),
+          owner: otherUser._id,
+          status: ITEM_STATUS.ACTIVE,
+        },
+      ]);
+    });
+
+    it('returns only items belonging to the authenticated user', async () => {
+      const res = await request(app)
+        .get('/api/items?owner=me')
+        .set('Authorization', `Bearer ${testUserToken}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.items.length).toBe(1);
+      expect(res.body.data.items[0].title).toBe('My Laptop');
+    });
+
+    it('rejects unauthenticated owner=me request with 401 UNAUTHENTICATED', async () => {
+      const res = await request(app).get('/api/items?owner=me');
+
+      expect(res.status).toBe(401);
+      expect(res.body.error.code).toBe('UNAUTHENTICATED');
+    });
+  });
+
+  describe('Multipart item creation', () => {
+    it('creates an item with attached image files via multipart/form-data', async () => {
+      const fakeImageBuffer = Buffer.from('fake image content');
+
+      const res = await request(app)
+        .post('/api/items')
+        .set('Authorization', `Bearer ${testUserToken}`)
+        .field('title', 'Blue Hydroflask')
+        .field('description', 'Found in sports complex gym area.')
+        .field('category', CATEGORY.SPORTS)
+        .field('type', ITEM_TYPE.FOUND)
+        .field('location', 'Sports Complex')
+        .field('date', new Date().toISOString())
+        .attach('images', fakeImageBuffer, { filename: 'bottle.png', contentType: 'image/png' });
+
+      expect(res.status).toBe(201);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.images.length).toBe(1);
+      expect(res.body.data.images[0].url).toBeDefined();
+    });
+
+    it('rejects non-image upload with 400 VALIDATION_ERROR', async () => {
+      const fakeTextBuffer = Buffer.from('hello world text');
+
+      const res = await request(app)
+        .post('/api/items')
+        .set('Authorization', `Bearer ${testUserToken}`)
+        .field('title', 'Blue Hydroflask')
+        .field('description', 'Found in sports complex gym area.')
+        .field('category', CATEGORY.SPORTS)
+        .field('type', ITEM_TYPE.FOUND)
+        .field('location', 'Sports Complex')
+        .field('date', new Date().toISOString())
+        .attach('images', fakeTextBuffer, { filename: 'notes.txt', contentType: 'text/plain' });
+
+      expect(res.status).toBe(400);
+      expect(res.body.success).toBe(false);
+      expect(res.body.error.code).toBe('VALIDATION_ERROR');
+    });
+  });
 });

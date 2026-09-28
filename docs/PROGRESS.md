@@ -46,3 +46,15 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Added comprehensive integration tests in `server/tests/auth.test.js` (16 tests) verifying registration, login, suspended account blockage, generic 401 error message without user enumeration, session restoration, and verified zero password leakage across all responses. Updated `server/tests/items.test.js` to use real JWT tokens.
 - Deviations from docs: None.
 - Follow-ups: Proceed to Phase 4 (`phase/4-items-ui`) for wiring Browse, ItemDetails, MyReports, and Report forms to the real API.
+
+## 2026-09-28 — Phase 4 — Reporting, search & item details (real API)
+- Implemented multer memory storage upload middleware `server/src/middleware/upload.js` (`uploadItemImages` and `processItemImages`) validating image file types (JPEG, PNG, WebP), 5MB size limit, and max 5 files.
+- Mounted image upload middleware on `POST /api/items` and `PUT /api/items/:id` in `server/src/routes/itemRoutes.js`.
+- Enhanced `itemService.getItems` to support `owner=me` query with authentication enforcement (rejects unauthenticated requests with 401).
+- Wired `client/src/services/itemService.js` directly to real backend API by default.
+- Enhanced `ReportItem.jsx` to map field-level server validation errors (`err.details`) into React Hook Form errors and successfully redirect to `/my-reports`.
+- Updated `MyReports.jsx` to fetch all statuses on tab ALL and connect real items to the user view.
+- Verified live Browse, Search, ItemDetails, and Landing views with real database listings seeded in MongoDB. Captured desktop and mobile screenshots (`browse_lost_real_desktop.png`, `browse_lost_real_mobile.png`, `landing_real_desktop.png`).
+- Added automated integration tests for `owner=me` queries and multipart image uploads.
+- Deviations from docs: None.
+- Follow-ups: Proceed to Phase 5 (`phase/5-claims-notifs`) for claims creation/approval state machine and notifications.

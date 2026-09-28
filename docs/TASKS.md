@@ -38,9 +38,9 @@ Verify: register → login → `/auth/me`; wrong password generic error; protect
 
 ## Phase 4 — Reporting, search & item details (real API)  (`phase/4-items-ui`)
 Read: docs/API_SPEC.md (Items), docs/UI_SPEC.md (Browse, ItemDetails, Report)
-- [ ] Wire Lost/Found browse, filters (URL-synced), pagination, ItemDetails, MyReports, Edit, status change, delete to the real API
-- [ ] ReportItem submits multipart (images may still be placeholders until Phase 6), field-level server errors, redirect to My Reports
-- [ ] Dashboard counts from real data
+- [x] Wire Lost/Found browse, filters (URL-synced), pagination, ItemDetails, MyReports, Edit, status change, delete to the real API
+- [x] ReportItem submits multipart (images may still be placeholders until Phase 6), field-level server errors, redirect to My Reports
+- [x] Dashboard counts from real data
 Verify: create LOST and FOUND items as two users; filters and search work; other user can't edit; cards/details match seed data; mock flag can be `false` for these services.
 
 ## Phase 5 — Claims, approvals & notifications  (`phase/5-claims-notifs`)
