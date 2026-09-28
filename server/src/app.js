@@ -12,6 +12,7 @@ import matchRouter from './routes/matchRoutes.js';
 import aiRouter from './routes/aiRoutes.js';
 import reportRouter from './routes/reportRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
+import { globalLimiter } from './middleware/rateLimiter.js';
 import { notFoundHandler } from './middleware/notFound.js';
 import { errorHandler } from './middleware/error.js';
 
@@ -30,6 +31,9 @@ app.use(
     credentials: true,
   })
 );
+
+// Global rate limiter (100 req/15min/IP)
+app.use(globalLimiter);
 
 // Logging
 if (env.NODE_ENV !== 'test') {

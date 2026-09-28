@@ -3,7 +3,7 @@ import { itemController } from '../controllers/itemController.js';
 import { validate } from '../middleware/validate.js';
 import { auth, optionalAuth } from '../middleware/auth.js';
 import { uploadItemImages, processItemImages } from '../middleware/upload.js';
-import { rematchLimiter } from '../middleware/rateLimiter.js';
+import { rematchLimiter, mutationLimiter } from '../middleware/rateLimiter.js';
 import {
   createItemSchema,
   updateItemSchema,
@@ -15,7 +15,7 @@ export const itemRouter = Router();
 
 itemRouter.get('/', optionalAuth, validate(itemQuerySchema, 'query'), itemController.getItems);
 itemRouter.get('/:id', optionalAuth, itemController.getItemById);
-itemRouter.post('/', auth, uploadItemImages, processItemImages, validate(createItemSchema, 'body'), itemController.createItem);
+itemRouter.post('/', auth, mutationLimiter, uploadItemImages, processItemImages, validate(createItemSchema, 'body'), itemController.createItem);
 itemRouter.put('/:id', auth, uploadItemImages, processItemImages, validate(updateItemSchema, 'body'), itemController.updateItem);
 itemRouter.patch('/:id/status', auth, validate(updateItemStatusSchema, 'body'), itemController.updateItemStatus);
 itemRouter.delete('/:id', auth, itemController.deleteItem);
