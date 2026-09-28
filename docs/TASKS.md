@@ -4,11 +4,11 @@ Rules: one phase at a time (`/build-phase`). Tick boxes only when verified. Each
 
 ## Phase 0 — Scaffold & tooling  (branch `phase/0-scaffold`)
 Read: AGENTS.md, docs/ARCHITECTURE.md
-- [ ] `git init`, root `package.json` (workspaces optional) with scripts from AGENTS.md; `concurrently` for `dev`
-- [ ] `server/`: Express app (`app.js` exports app), `server.js`, `config/env.js` (Zod-validated), `utils/{ApiError,asyncHandler,logger,response}.js`, error + notFound middleware, helmet/cors/morgan/json limit, `GET /api/health`, ESLint config
-- [ ] `client/`: Vite React app, Tailwind v4 via `@tailwindcss/vite`, react-router, axios, `services/api.js`, ESLint config, Vitest config
-- [ ] `.env` files created from `.env.example` (do not commit)
-- [ ] `docs/PROGRESS.md` initialized
+- [x] `git init`, root `package.json` (workspaces optional) with scripts from AGENTS.md; `concurrently` for `dev`
+- [x] `server/`: Express app (`app.js` exports app), `server.js`, `config/env.js` (Zod-validated), `utils/{ApiError,asyncHandler,logger,response}.js`, error + notFound middleware, helmet/cors/morgan/json limit, `GET /api/health`, ESLint config
+- [x] `client/`: Vite React app, Tailwind v4 via `@tailwindcss/vite`, react-router, axios, `services/api.js`, ESLint config, Vitest config
+- [x] `.env` files created from `.env.example` (do not commit)
+- [x] `docs/PROGRESS.md` initialized
 Verify: `npm run dev` starts both; `curl localhost:5000/api/health` → ok; client loads; `npm run lint` passes.
 
 ## Phase 1 — Frontend shell with mock data  (`phase/1-frontend-shell`)
