@@ -23,10 +23,10 @@ Verify: in browser: Landing → Register/Login → Dashboard → Lost list (filt
 
 ## Phase 2 — Backend foundation: models, Item CRUD, seed  (`phase/2-backend-core`)
 Read: docs/DATA_MODEL.md, docs/API_SPEC.md (Items), rules/10-backend.md
-- [ ] `constants/enums.js` (+ client mirror), all Mongoose models with indexes (User, Item, Claim, Notification, Match, Report)
-- [ ] Zod validators, `validate` middleware, pagination + escapeRegex utils
-- [ ] Items: list (all filters, `$text`, date range, pagination), get, create, update, status, delete (no auth yet → temporarily accept `x-dev-user` header only when `NODE_ENV=development`, removed in Phase 3)
-- [ ] `scripts/seed.js` per DATA_MODEL
+- [x] `constants/enums.js` (+ client mirror), all Mongoose models with indexes (User, Item, Claim, Notification, Match, Report)
+- [x] Zod validators, `validate` middleware, pagination + escapeRegex utils
+- [x] Items: list (all filters, `$text`, date range, pagination), get, create, update, status, delete (no auth yet → temporarily accept `x-dev-user` header only when `NODE_ENV=development`, removed in Phase 3)
+- [x] `scripts/seed.js` per DATA_MODEL
 Verify: `npm run seed`; curl/REST client: list with each filter, create, update, delete; invalid body → 400 envelope.
 
 ## Phase 3 — Authentication & protected routes  (`phase/3-auth`)

@@ -4,6 +4,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { env } from './config/env.js';
 import { healthRouter } from './routes/health.js';
+import { itemRouter } from './routes/itemRoutes.js';
+import { devUserMiddleware } from './middleware/devUser.js';
 import { notFoundHandler } from './middleware/notFound.js';
 import { errorHandler } from './middleware/error.js';
 
@@ -32,8 +34,14 @@ if (env.NODE_ENV !== 'test') {
 app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ extended: true, limit: '100kb' }));
 
-// API routes
+// Health route (public, independent of database)
 app.use('/api', healthRouter);
+
+// Development user extractor (Phase 2 dev convenience, removed in Phase 3)
+app.use('/api/items', devUserMiddleware);
+
+// API routes
+app.use('/api/items', itemRouter);
 
 // 404 handler
 app.use(notFoundHandler);

@@ -22,3 +22,15 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Verified acceptance flows in browser and captured screenshots at desktop and mobile widths.
 - Deviations from docs: None.
 - Follow-ups: Proceed to Phase 2 (`phase/2-backend-core`) for Mongoose models, Item CRUD, and DB seed script.
+
+## 2026-09-28 — Phase 2 — Backend foundation: models, Item CRUD, seed
+- Implemented `server/src/constants/enums.js` reflecting all PRD/DATA_MODEL enums.
+- Created all 6 Mongoose models (`User`, `Item`, `Claim`, `Notification`, `Match`, `Report`) with exact schema requirements, indexes (text index, compound indexes, unique partial indexes), and sensitive field protections.
+- Implemented utility helpers: `escapeRegex.js` for ReDoS/injection-safe queries, `pagination.js` for limit/offset handling.
+- Implemented Zod schemas for Items in `validators/itemValidators.js` and validation middleware `middleware/validate.js`.
+- Implemented `itemService.js` and `itemController.js` supporting list with search/filtering, get item with contact privacy protection, create, update, status change with 409 conflict validation, and delete with approved claim check.
+- Added temporary dev user injector `middleware/devUser.js` for development/testing prior to Phase 3 auth.
+- Implemented comprehensive `scripts/seed.js` creating 1 admin, 5 students, 25 items across campus locations (with 3 matching pairs and 2 near-misses), claims, notifications, matches, and reports. Enhanced with automatic in-memory MongoDB fallback when local Mongo service is not running.
+- Created 16 integration tests in `server/tests/items.test.js` validating all CRUD operations, filtering, status transitions, and privacy filtering.
+- Deviations from docs: Enhanced seed script to automatically start an in-memory MongoDB instance if local MongoDB connection is refused (`ECONNREFUSED`), allowing seed verification in any environment without requiring an external daemon.
+- Follow-ups: Proceed to Phase 3 (`phase/3-auth`) for JWT auth, password hashing, route protection, and removing the temporary dev user injector.
