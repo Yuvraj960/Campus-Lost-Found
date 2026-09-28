@@ -6,10 +6,13 @@ import { User } from '../src/models/User.js';
 import { Item } from '../src/models/Item.js';
 import { Claim } from '../src/models/Claim.js';
 import { CATEGORY, ITEM_TYPE, ITEM_STATUS, CLAIM_STATUS } from '../src/constants/enums.js';
+import { generateToken } from '../src/utils/jwt.js';
 
 let mongoServer;
 let testUser;
 let otherUser;
+let testUserToken;
+let otherUserToken;
 
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
@@ -35,6 +38,9 @@ beforeAll(async () => {
     phone: '+1-555-0188',
   });
   await otherUser.save();
+
+  testUserToken = generateToken(testUser);
+  otherUserToken = generateToken(otherUser);
 });
 
 afterAll(async () => {
@@ -61,7 +67,7 @@ describe('Items API', () => {
 
       const res = await request(app)
         .post('/api/items')
-        .set('x-dev-user', testUser._id.toString())
+        .set('Authorization', `Bearer ${testUserToken}`)
         .send(itemData);
 
       expect(res.status).toBe(201);
@@ -84,7 +90,7 @@ describe('Items API', () => {
 
       const res = await request(app)
         .post('/api/items')
-        .set('x-dev-user', testUser._id.toString())
+        .set('Authorization', `Bearer ${testUserToken}`)
         .send(invalidData);
 
       expect(res.status).toBe(400);
@@ -187,7 +193,7 @@ describe('Items API', () => {
 
       const res = await request(app)
         .get(`/api/items/${item._id}`)
-        .set('x-dev-user', otherUser._id.toString());
+        .set('Authorization', `Bearer ${otherUserToken}`);
 
       expect(res.status).toBe(200);
       expect(res.body.data.id).toBe(item._id.toString());
@@ -211,7 +217,7 @@ describe('Items API', () => {
 
       const res = await request(app)
         .get(`/api/items/${item._id}`)
-        .set('x-dev-user', testUser._id.toString());
+        .set('Authorization', `Bearer ${testUserToken}`);
 
       expect(res.status).toBe(200);
       expect(res.body.data.owner.email).toBe(testUser.email);
@@ -244,7 +250,7 @@ describe('Items API', () => {
 
       const res = await request(app)
         .patch(`/api/items/${item._id}/status`)
-        .set('x-dev-user', testUser._id.toString())
+        .set('Authorization', `Bearer ${testUserToken}`)
         .send({ status: ITEM_STATUS.RESOLVED });
 
       expect(res.status).toBe(200);
@@ -266,7 +272,7 @@ describe('Items API', () => {
 
       const res = await request(app)
         .patch(`/api/items/${item._id}/status`)
-        .set('x-dev-user', testUser._id.toString())
+        .set('Authorization', `Bearer ${testUserToken}`)
         .send({ status: ITEM_STATUS.RESOLVED });
 
       expect(res.status).toBe(409);
@@ -290,7 +296,7 @@ describe('Items API', () => {
 
       const res = await request(app)
         .delete(`/api/items/${item._id}`)
-        .set('x-dev-user', testUser._id.toString());
+        .set('Authorization', `Bearer ${testUserToken}`);
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
@@ -321,7 +327,7 @@ describe('Items API', () => {
 
       const res = await request(app)
         .delete(`/api/items/${item._id}`)
-        .set('x-dev-user', testUser._id.toString());
+        .set('Authorization', `Bearer ${testUserToken}`);
 
       expect(res.status).toBe(409);
       expect(res.body.success).toBe(false);

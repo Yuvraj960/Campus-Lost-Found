@@ -34,3 +34,15 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Created 16 integration tests in `server/tests/items.test.js` validating all CRUD operations, filtering, status transitions, and privacy filtering.
 - Deviations from docs: Enhanced seed script to automatically start an in-memory MongoDB instance if local MongoDB connection is refused (`ECONNREFUSED`), allowing seed verification in any environment without requiring an external daemon.
 - Follow-ups: Proceed to Phase 3 (`phase/3-auth`) for JWT auth, password hashing, route protection, and removing the temporary dev user injector.
+
+## 2026-09-28 — Phase 3 — Authentication & protected routes
+- Implemented Zod validation schemas for auth in `server/src/validators/authValidators.js` (`registerSchema` with password strength requirement ≥8 chars with letter and number, `loginSchema`, `updateMeSchema`).
+- Implemented JWT utility `server/src/utils/jwt.js` (HS256, 7d expiration, payload with `sub` and `role` only).
+- Implemented IP rate limiter `server/src/middleware/rateLimiter.js` capping auth requests to 10 requests per 15 minutes per IP.
+- Implemented auth middlewares in `server/src/middleware/auth.js` (`auth` validating Bearer token, loading user, rejecting missing or suspended users; `optionalAuth` attaching user if valid token present) and `requireRole.js` for RBAC checks.
+- Implemented auth service and controller (`server/src/services/authService.js`, `server/src/controllers/authController.js`, `server/src/routes/authRoutes.js`) with `/register` (201), `/login` (200), `/me` (200), `/me` PATCH (200), and `/logout` (200). Added domain restriction logic with `ALLOWED_EMAIL_DOMAIN`.
+- Removed temporary `devUserMiddleware` and protected Item mutation routes (`POST`, `PUT`, `PATCH /status`, `DELETE`) with `auth`. Mounted `optionalAuth` on item reads to reveal owner contact info when allowed.
+- Updated client `authService.js` to call the real backend API by default.
+- Added comprehensive integration tests in `server/tests/auth.test.js` (16 tests) verifying registration, login, suspended account blockage, generic 401 error message without user enumeration, session restoration, and verified zero password leakage across all responses. Updated `server/tests/items.test.js` to use real JWT tokens.
+- Deviations from docs: None.
+- Follow-ups: Proceed to Phase 4 (`phase/4-items-ui`) for wiring Browse, ItemDetails, MyReports, and Report forms to the real API.

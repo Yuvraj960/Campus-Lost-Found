@@ -1,8 +1,8 @@
 import api from './api.js';
 import { mockUsers } from '../mocks/users.js';
 import { mockDelay, checkMockError } from '../mocks/mockUtils.js';
-
-const isMock = import.meta.env.VITE_USE_MOCK === 'true';
+// Auth calls the real API by default in Phase 3+; falls back to mock if VITE_USE_MOCK_AUTH === 'true'
+const isMock = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
 
 export const authService = {
   login: async ({ email, password }) => {

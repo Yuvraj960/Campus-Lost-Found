@@ -31,9 +31,9 @@ Verify: `npm run seed`; curl/REST client: list with each filter, create, update,
 
 ## Phase 3 — Authentication & protected routes  (`phase/3-auth`)
 Read: docs/API_SPEC.md (Auth), rules/30-security.md
-- [ ] Register/login/me/patch me/logout; bcryptjs; JWT; `auth` and `requireRole` middleware; suspended check; auth rate limit; optional email domain restriction
-- [ ] Remove dev-user header; protect Item mutations; owner checks in services; privacy stripping of contact fields
-- [ ] Client: real auth service, `AuthContext` restores session via `/auth/me`, 401 handling, redirect-back after login; set `VITE_USE_MOCK=false` for auth
+- [x] Register/login/me/patch me/logout; bcryptjs; JWT; `auth` and `requireRole` middleware; suspended check; auth rate limit; optional email domain restriction
+- [x] Remove dev-user header; protect Item mutations; owner checks in services; privacy stripping of contact fields
+- [x] Client: real auth service, `AuthContext` restores session via `/auth/me`, 401 handling, redirect-back after login; set `VITE_USE_MOCK=false` for auth
 Verify: register → login → `/auth/me`; wrong password generic error; protected route 401 without token; suspended user blocked; password never in any response (grep responses).
 
 ## Phase 4 — Reporting, search & item details (real API)  (`phase/4-items-ui`)
