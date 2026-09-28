@@ -10,6 +10,8 @@ import { claimRouter } from './routes/claimRoutes.js';
 import { notificationRouter } from './routes/notificationRoutes.js';
 import matchRouter from './routes/matchRoutes.js';
 import aiRouter from './routes/aiRoutes.js';
+import reportRouter from './routes/reportRoutes.js';
+import adminRouter from './routes/adminRoutes.js';
 import { notFoundHandler } from './middleware/notFound.js';
 import { errorHandler } from './middleware/error.js';
 
@@ -48,6 +50,8 @@ app.use('/api/claims', claimRouter);
 app.use('/api/notifications', notificationRouter);
 app.use('/api/matches', matchRouter);
 app.use('/api/ai', aiRouter);
+app.use('/api/reports', reportRouter);
+app.use('/api/admin', adminRouter);
 
 // 404 handler
 app.use(notFoundHandler);

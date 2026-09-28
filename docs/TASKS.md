@@ -66,9 +66,9 @@ Verify: seeded pair produces a match ≥ threshold and notifies both owners; nea
 
 ## Phase 8 — Admin, abuse reports & analytics  (`phase/8-admin`)
 Read: docs/API_SPEC.md (Admin, Reports), docs/UI_SPEC.md (admin routes)
-- [ ] Report listing flow (ReportModal → `/reports`), flag item
-- [ ] Admin APIs (stats via aggregation pipelines, users, items, claims, reports) + role guard
-- [ ] Admin UI: overview charts and management tables with actions, confirm dialogs
+- [x] Report listing flow (ReportModal → `/reports`), flag item
+- [x] Admin APIs (stats via aggregation pipelines, users, items, claims, reports) + role guard
+- [x] Admin UI: overview charts and management tables with actions, confirm dialogs
 Verify: admin sees stats matching DB; suspend user blocks login; remove item hides it publicly and notifies owner; student gets 403 on `/admin/*`.
 
 ## Phase 9 — Testing, security, bug fixing  (`phase/9-quality`)

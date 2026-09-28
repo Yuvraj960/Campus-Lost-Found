@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { itemService } from '../services/itemService.js';
 import { claimService } from '../services/claimService.js';
 import { matchService } from '../services/matchService.js';
+import { reportService } from '../services/reportService.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import ImageGallery from '../components/ImageGallery.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
@@ -139,11 +140,28 @@ export default function ItemDetails() {
     }
   };
 
-  const handleSubmitAbuseReport = (e) => {
+  const handleSubmitAbuseReport = async (e) => {
     e.preventDefault();
-    toast.success('Listing report submitted for admin review.');
-    setReportModalOpen(false);
-    setReportDetails('');
+    if (!isAuthenticated) {
+      toast.error('Please log in to report a listing.');
+      navigate('/login');
+      return;
+    }
+    setSubmittingAction(true);
+    try {
+      await reportService.createReport({
+        itemId: item.id || item._id,
+        reason: reportReason,
+        details: reportDetails,
+      });
+      toast.success('Listing report submitted for admin review.');
+      setReportModalOpen(false);
+      setReportDetails('');
+    } catch (err) {
+      toast.error(err.response?.data?.error?.message || err.message || 'Failed to submit report');
+    } finally {
+      setSubmittingAction(false);
+    }
   };
 
   return (
@@ -498,7 +516,7 @@ export default function ItemDetails() {
             <Button variant="outline" onClick={() => setReportModalOpen(false)}>
               Cancel
             </Button>
-            <Button variant="danger" type="submit">
+            <Button variant="danger" type="submit" loading={submittingAction}>
               Submit Report
             </Button>
           </div>

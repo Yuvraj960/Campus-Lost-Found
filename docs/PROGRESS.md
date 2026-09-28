@@ -128,3 +128,27 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Monorepo test suite now passes at 66 tests (65 server + 1 client), zero lint warnings/errors.
 - Deviations from docs: None.
 - Follow-ups: Proceed to Phase 8 (`phase/8-admin`) for abuse reports, admin moderation, and analytics.
+
+## 2026-09-28 — Phase 8 — Admin, abuse reports & analytics
+- Implemented Abuse Reporting API:
+  - Zod schemas `createReportSchema` and `updateReportSchema` in `server/src/validators/reportValidators.js`.
+  - Service `server/src/services/reportService.js` enforcing unique `{item, reporter}` constraint (rejecting duplicates with 409 `CONFLICT`), populating reporter/item, and automatically marking reported items with `isFlagged: true`.
+  - Controller and routes mounted at `POST /api/reports` with `requireAuth` and rate limiters.
+- Implemented Admin Moderation & Analytics:
+  - Zod schemas `adminValidators.js` for query pagination, user status updates, item moderation, claims, and reports.
+  - Role guard middleware `requireRole(ROLE.ADMIN)` applied to all `/api/admin/*` endpoints.
+  - Aggregation pipelines in `adminService.getStats`: `totals` (users, lost, found, resolved, pendingClaims, openReports), `byCategory` (with design token fills), `byLocation` (top 8), `lostVsFound` (8-week trend), `reportsPerWeek` (8-week trend), and `resolutionRate`.
+  - User management: `GET /api/admin/users`, `PATCH /api/admin/users/:id/status` (ACTIVE/SUSPENDED, with guards blocking self-suspension and last admin suspension), and `DELETE /api/admin/users/:id` (cascading user deletion across items, claims, notifications, reports, and Cloudinary asset cleanup, guarded against self-deletion or deleting the last admin).
+  - Item moderation: `GET /api/admin/items` and `PATCH /api/admin/items/:id` (`isFlagged`, `isRemoved`). Automatically dispatches `ITEM_REMOVED` notification to the item owner when removed.
+  - Claim moderation: `GET /api/admin/claims` with populated claimant and item listings.
+  - Report moderation: `GET /api/admin/reports` and `PATCH /api/admin/reports/:id` (updates status with `resolutionNote` and records `resolvedBy` admin id).
+- Client integration:
+  - Created `client/src/services/reportService.js` and wired `ItemDetails.jsx` abuse report modal directly to `reportService.createReport` with error toasts and loading states.
+  - Ensured `client/src/services/adminService.js` maps cleanly to real `/api/admin/*` endpoints.
+- Integration tests:
+  - Added `server/tests/reports.test.js` (6 tests) covering authentication, flagging item, duplicate report rejection (409), multi-user reports, 404 on missing item, and Zod validation.
+  - Added `server/tests/admin.test.js` (14 tests) covering 401 unauthenticated / 403 student rejection, aggregation analytics calculations, user listing/filtering/suspension/cascading deletion, item moderation & `ITEM_REMOVED` notifications, and claim/report moderation.
+- All 86 tests pass (85 server + 1 client), zero lint warnings/errors, and production build succeeded cleanly.
+- Deviations from docs: None.
+- Follow-ups: Proceed to Phase 9 (`phase/9-quality`) for quality pass, frontend test harness, security audit, and bug fixing.
+
