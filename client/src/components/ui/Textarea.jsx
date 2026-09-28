@@ -4,7 +4,7 @@ const Textarea = forwardRef(function Textarea(
   { label, error, helperText, id, rows = 4, className = '', ...props },
   ref
 ) {
-  const textareaId = id || props.name;
+  const textareaId = id || props.name || (label ? label.toLowerCase().replace(/[^a-z0-9]/g, '-') : undefined);
 
   return (
     <div className="w-full">

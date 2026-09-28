@@ -4,7 +4,7 @@ const Select = forwardRef(function Select(
   { label, error, helperText, id, children, className = '', ...props },
   ref
 ) {
-  const selectId = id || props.name;
+  const selectId = id || props.name || (label ? label.toLowerCase().replace(/[^a-z0-9]/g, '-') : undefined);
 
   return (
     <div className="w-full">

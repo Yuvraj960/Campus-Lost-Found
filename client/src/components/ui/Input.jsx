@@ -4,7 +4,7 @@ const Input = forwardRef(function Input(
   { label, error, helperText, id, className = '', ...props },
   ref
 ) {
-  const inputId = id || props.name;
+  const inputId = id || props.name || (label ? label.toLowerCase().replace(/[^a-z0-9]/g, '-') : undefined);
 
   return (
     <div className="w-full">

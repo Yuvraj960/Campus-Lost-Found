@@ -142,7 +142,7 @@ export default function ReportItem({ forcedType }) {
           {/* Description with AI Assist */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              <label htmlFor="description" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Detailed Description
               </label>
               <button
