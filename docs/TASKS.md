@@ -59,9 +59,9 @@ Verify: upload 1–5 images; 6th rejected; non-image and >5 MB rejected with cle
 
 ## Phase 7 — AI matching & assistant  (`phase/7-ai`)
 Read: docs/AI_MATCHING.md
-- [ ] Gemini client wrapper, matchScorer (AI + heuristic), matchingService, Match model usage, notifications, rematch endpoint, matches API
-- [ ] `/ai/assist` + "Help me describe it" button
-- [ ] MatchCard on ItemDetails (owner), Dashboard, Matches page; dismiss action
+- [x] Gemini client wrapper, matchScorer (AI + heuristic), matchingService, Match model usage, notifications, rematch endpoint, matches API
+- [x] `/ai/assist` + "Help me describe it" button
+- [x] MatchCard on ItemDetails (owner), Dashboard, Matches page; dismiss action
 Verify: seeded pair produces a match ≥ threshold and notifies both owners; near-miss pairs don't; works with blank `GEMINI_API_KEY` via heuristic; malformed AI output doesn't break item creation.
 
 ## Phase 8 — Admin, abuse reports & analytics  (`phase/8-admin`)

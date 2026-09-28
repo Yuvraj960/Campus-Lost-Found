@@ -3,9 +3,11 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { itemService } from '../services/itemService.js';
 import { claimService } from '../services/claimService.js';
+import { matchService } from '../services/matchService.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import ImageGallery from '../components/ImageGallery.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
+import MatchCard from '../components/MatchCard.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import Button from '../components/ui/Button.jsx';
 import Modal from '../components/ui/Modal.jsx';
@@ -35,6 +37,8 @@ export default function ItemDetails() {
 
   const [item, setItem] = useState(null);
   const [claims, setClaims] = useState([]);
+  const [matches, setMatches] = useState([]);
+  const [rematching, setRematching] = useState(false);
   const [loading, setLoading] = useState(true);
   const [claimModalOpen, setClaimModalOpen] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -49,8 +53,12 @@ export default function ItemDetails() {
       const data = await itemService.getItemById(id);
       setItem(data);
       if (user && data.owner?.id === user.id) {
-        const claimList = await itemService.getItemClaims(id);
+        const [claimList, matchList] = await Promise.all([
+          itemService.getItemClaims(id).catch(() => []),
+          matchService.getMyMatches().catch(() => []),
+        ]);
         setClaims(claimList || []);
+        setMatches((matchList || []).filter((m) => m.myItem?.id === id));
       }
     } catch (err) {
       toast.error(err.message || 'Item not found');
@@ -59,6 +67,19 @@ export default function ItemDetails() {
       setLoading(false);
     }
   }, [id, user, navigate]);
+
+  const handleRematch = async () => {
+    setRematching(true);
+    try {
+      const res = await matchService.rematchItem(item.id);
+      toast.success(res.created ? `Discovered ${res.created} new match(es)!` : 'AI scan complete. No new matches found.');
+      fetchItemData();
+    } catch {
+      toast.error('Failed to run matching');
+    } finally {
+      setRematching(false);
+    }
+  };
 
   useEffect(() => {
     fetchItemData();
@@ -274,6 +295,19 @@ export default function ItemDetails() {
                   </Button>
                 )}
 
+                {item.status === 'ACTIVE' && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRematch}
+                    loading={rematching}
+                    className="text-purple-700 border-purple-200 hover:bg-purple-50"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 mr-1 text-purple-600" />
+                    AI Match
+                  </Button>
+                )}
+
                 <Button
                   variant="outline"
                   size="sm"
@@ -317,6 +351,36 @@ export default function ItemDetails() {
           )}
         </div>
       </div>
+
+      {/* AI Discovered Matches Section */}
+      {isOwner && matches.length > 0 && (
+        <section className="mt-12 pt-8 border-t border-purple-200 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-700 uppercase tracking-wider mb-1">
+                <Sparkles className="w-4 h-4 text-purple-600" />
+                Intelligent Match Engine
+              </div>
+              <h2 className="font-heading text-xl font-bold text-slate-900 tracking-tight">
+                Potential Matches for this Listing ({matches.length})
+              </h2>
+              <p className="text-xs text-slate-500">
+                These candidate items share location, dates, or keywords with your report.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {matches.map((m) => (
+              <MatchCard
+                key={m.id}
+                match={m}
+                onDismissed={(matchId) => setMatches((prev) => prev.filter((entry) => entry.id !== matchId))}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Owner Claims Review Section */}
       {isOwner && (

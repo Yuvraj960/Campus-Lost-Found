@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { CATEGORY, CATEGORY_LABELS } from '../constants/enums.js';
 import { CAMPUS_LOCATIONS } from '../constants/locations.js';
 import { itemService } from '../services/itemService.js';
+import { aiService } from '../services/aiService.js';
 import Input from '../components/ui/Input.jsx';
 import Textarea from '../components/ui/Textarea.jsx';
 import Select from '../components/ui/Select.jsx';
@@ -42,6 +43,7 @@ export default function ReportItem({ forcedType }) {
 
   const [files, setFiles] = useState([]);
   const [aiSuggesting, setAiSuggesting] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState(null);
 
   const {
     register,
@@ -66,30 +68,20 @@ export default function ReportItem({ forcedType }) {
 
   // AI Assist feature: "Help me describe it"
   const handleAiAssist = async () => {
-    if (!descriptionValue || descriptionValue.length < 5) {
+    if (!descriptionValue || descriptionValue.trim().length < 3) {
       toast('Type a few messy words in the description first!', { icon: '💡' });
       return;
     }
     setAiSuggesting(true);
-    // Simulate AI assist parsing
-    setTimeout(() => {
-      const lower = descriptionValue.toLowerCase();
-      if (lower.includes('phone') || lower.includes('samsung') || lower.includes('iphone')) {
-        setValue('category', CATEGORY.ELECTRONICS, { shouldValidate: true });
-        setValue('title', isLost ? 'Lost Smartphone on Campus' : 'Found Smartphone on Campus', { shouldValidate: true });
-      } else if (lower.includes('key')) {
-        setValue('category', CATEGORY.KEYS, { shouldValidate: true });
-        setValue('title', isLost ? 'Lost Set of Keys' : 'Found Set of Keys', { shouldValidate: true });
-      } else if (lower.includes('water') || lower.includes('bottle') || lower.includes('flask')) {
-        setValue('category', CATEGORY.SPORTS, { shouldValidate: true });
-        setValue('title', isLost ? 'Lost Water Bottle' : 'Found Water Bottle', { shouldValidate: true });
-      } else {
-        setValue('category', CATEGORY.OTHER, { shouldValidate: true });
-        setValue('title', `${isLost ? 'Lost' : 'Found'} Campus Item`, { shouldValidate: true });
-      }
-      toast.success('AI suggestion applied to title & category!');
+    try {
+      const data = await aiService.getAssist({ text: descriptionValue.slice(0, 600) });
+      setAiSuggestions(data);
+      toast.success('AI suggestions generated! Click any suggestion below to apply.');
+    } catch {
+      toast.error('AI assistant is temporarily unavailable');
+    } finally {
       setAiSuggesting(false);
-    }, 500);
+    }
   };
 
   const onSubmit = async (values) => {
@@ -169,6 +161,94 @@ export default function ReportItem({ forcedType }) {
               error={errors.description?.message}
               {...register('description')}
             />
+
+            {/* AI Suggestions Card */}
+            {aiSuggestions && (
+              <div className="p-4 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-3 animate-in fade-in duration-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-purple-900">
+                    <Sparkles className="w-4 h-4 text-purple-600" />
+                    AI Suggestions (Click any to apply)
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setAiSuggestions(null)}
+                    className="text-2xs text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  {aiSuggestions.suggestedTitle && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setValue('title', aiSuggestions.suggestedTitle, { shouldValidate: true });
+                        toast.success('Applied suggested title!');
+                      }}
+                      className="text-left p-2.5 rounded-xl bg-white border border-purple-100 hover:border-purple-300 transition cursor-pointer shadow-2xs"
+                    >
+                      <div className="text-3xs font-semibold text-purple-600 uppercase">Suggested Title</div>
+                      <div className="font-medium text-slate-800 line-clamp-1">{aiSuggestions.suggestedTitle}</div>
+                    </button>
+                  )}
+
+                  {aiSuggestions.category && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setValue('category', aiSuggestions.category, { shouldValidate: true });
+                        toast.success(`Applied category: ${CATEGORY_LABELS[aiSuggestions.category] || aiSuggestions.category}`);
+                      }}
+                      className="text-left p-2.5 rounded-xl bg-white border border-purple-100 hover:border-purple-300 transition cursor-pointer shadow-2xs"
+                    >
+                      <div className="text-3xs font-semibold text-purple-600 uppercase">Suggested Category</div>
+                      <div className="font-medium text-slate-800">
+                        {CATEGORY_LABELS[aiSuggestions.category] || aiSuggestions.category}
+                      </div>
+                    </button>
+                  )}
+                </div>
+
+                {/* Likely Locations Chips */}
+                {aiSuggestions.likelyLocations?.length > 0 && (
+                  <div>
+                    <div className="text-3xs font-semibold text-slate-500 uppercase mb-1">Suggested Locations:</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {aiSuggestions.likelyLocations.map((loc, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => {
+                            setValue('location', loc, { shouldValidate: true });
+                            toast.success(`Applied location: ${loc}`);
+                          }}
+                          className="text-xs px-2.5 py-1 rounded-lg bg-white border border-purple-200 text-purple-700 hover:bg-purple-100 transition cursor-pointer"
+                        >
+                          + {loc}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Clarifying Questions */}
+                {aiSuggestions.clarifyingQuestions?.length > 0 && (
+                  <div className="bg-white/80 p-2.5 rounded-xl border border-purple-100 text-2xs text-slate-600 space-y-1">
+                    <div className="font-bold text-slate-700 flex items-center gap-1">
+                      <HelpCircle className="w-3 h-3 text-purple-600" />
+                      Helpful identifying questions to answer in your description:
+                    </div>
+                    <ul className="list-disc list-inside space-y-0.5 text-slate-600 pl-1">
+                      {aiSuggestions.clarifyingQuestions.map((q, i) => (
+                        <li key={i}>{q}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Category & Location */}

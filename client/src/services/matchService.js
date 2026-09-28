@@ -26,4 +26,14 @@ export const matchService = {
     const res = await api.patch(`/matches/${id}`, { status: 'DISMISSED' });
     return res.data;
   },
+
+  rematchItem: async (itemId) => {
+    if (isMock) {
+      checkMockError();
+      await mockDelay(350);
+      return { created: 1 };
+    }
+    const res = await api.post(`/items/${itemId}/rematch`);
+    return res.data;
+  },
 };

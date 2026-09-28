@@ -38,6 +38,8 @@ export const auth = async (req, res, next) => {
   }
 };
 
+export const requireAuth = auth;
+
 /**
  * Optional authentication middleware.
  * Attaches req.user if a valid token is provided, but does not block unauthenticated requests.

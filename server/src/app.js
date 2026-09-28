@@ -8,6 +8,8 @@ import { authRouter } from './routes/authRoutes.js';
 import { itemRouter } from './routes/itemRoutes.js';
 import { claimRouter } from './routes/claimRoutes.js';
 import { notificationRouter } from './routes/notificationRoutes.js';
+import matchRouter from './routes/matchRoutes.js';
+import aiRouter from './routes/aiRoutes.js';
 import { notFoundHandler } from './middleware/notFound.js';
 import { errorHandler } from './middleware/error.js';
 
@@ -44,6 +46,8 @@ app.use('/api/auth', authRouter);
 app.use('/api/items', itemRouter);
 app.use('/api/claims', claimRouter);
 app.use('/api/notifications', notificationRouter);
+app.use('/api/matches', matchRouter);
+app.use('/api/ai', aiRouter);
 
 // 404 handler
 app.use(notFoundHandler);

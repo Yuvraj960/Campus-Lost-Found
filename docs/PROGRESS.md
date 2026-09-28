@@ -96,3 +96,35 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Full monorepo test suite now passes with 53 tests (52 server + 1 client).
 - Deviations from docs: None.
 - Follow-ups: Proceed to Phase 7 (`phase/7-ai`) for AI matching, heuristic scorer, and assistant endpoint.
+
+## 2026-09-28 — Phase 7 — AI matching & assistant
+- Initialized Gemini client in `server/src/config/gemini.js` with `GoogleGenAI` from `@google/genai` and graceful fallback when `GEMINI_API_KEY` is not provided.
+- Created `server/src/services/ai/geminiClient.js` with structured JSON generation, 15-second timeout, and 1 retry.
+- Implemented `server/src/services/ai/matchScorer.js`:
+  - Deterministic heuristic scoring (0–100) based on category match (+30 or +10 for OTHER), location token overlap (up to +25), date proximity (up to +15), and title/description token Jaccard similarity (up to +30).
+  - Batch candidate AI scoring with Gemini, validating against JSON schema, clamping scores 0–100, and fallback to heuristic when Gemini is unconfigured or fails.
+- Implemented `server/src/services/matchingService.js`:
+  - `runForItem`: Prefilters candidates (opposite type, ACTIVE, not removed, different owner, matching category or OTHER, date window [-1, +30] days, top 5 heuristic ≥ 25).
+  - Persists matches using upsert on `{lostItem, foundItem}`, respecting `MATCH_THRESHOLD` (75) and `FALLBACK_MATCH_THRESHOLD` (60).
+  - Dispatches `MATCH_FOUND` notifications to both item owners on new match discovery.
+  - `getMyMatches`: Returns suggested matches for user's items, hiding other item's contact info.
+  - `dismissMatch`: Sets match status to `DISMISSED` with ownership validation.
+  - `rematchItem`: Re-runs matching on demand by the item owner.
+- Implemented `server/src/services/ai/assistService.js`:
+  - Turns raw descriptions into structured output (`suggestedTitle`, `category`, `keywords`, `likelyLocations`, `clarifyingQuestions`).
+  - Strict enum constraint on categories and comprehensive keyword-to-category dictionary fallback.
+- Added endpoints and rate limiters:
+  - Mounted `/api/matches` (`GET /my`, `PATCH /:id`).
+  - Mounted `/api/ai/assist` (`POST /assist`) with 20/15min rate limit.
+  - Added `POST /api/items/:id/rematch` with 5/hour rate limit.
+  - Triggered background matching asynchronously upon item creation in `itemController.createItem`.
+- Client integration:
+  - Created `client/src/services/aiService.js` and updated `matchService.js` with `rematchItem`.
+  - Added interactive "Help me describe it" suggestion panel in `ReportItem.jsx`, allowing users to apply suggested title, category, and locations upon clicking.
+  - Added "Run AI Matching" and "Potential Matches for this Listing" sections in `ItemDetails.jsx` for item owners.
+- Added comprehensive integration test suites:
+  - `server/tests/matching.test.js` (8 tests) validating prefilter, thresholds, notifications, upsert idempotency, contact concealment, dismissal, rematch, and graceful fallback on malformed AI output.
+  - `server/tests/aiAssist.test.js` (5 tests) validating authentication, string length constraints, and dictionary fallback category detection.
+- Monorepo test suite now passes at 66 tests (65 server + 1 client), zero lint warnings/errors.
+- Deviations from docs: None.
+- Follow-ups: Proceed to Phase 8 (`phase/8-admin`) for abuse reports, admin moderation, and analytics.

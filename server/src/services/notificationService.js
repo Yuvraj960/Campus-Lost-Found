@@ -25,6 +25,10 @@ export const notificationService = {
     }
   },
 
+  createNotification: async (params) => {
+    return notificationService.create(params);
+  },
+
   /**
    * Get paginated notifications for recipient, newest first.
    */

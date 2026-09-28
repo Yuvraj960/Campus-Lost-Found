@@ -28,3 +28,5 @@ export const validate = (schemaOrConfig, defaultProperty = 'body') => (req, res,
     next(err);
   }
 };
+
+export const validateBody = (schema) => validate(schema, 'body');
