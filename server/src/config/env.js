@@ -6,7 +6,9 @@ dotenv.config();
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(5000),
-  MONGODB_URI: z.string().default('mongodb://127.0.0.1:27017/campus-lost-found'),
+  MONGODB_URI: z
+    .string()
+    .default(() => process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/campus-lost-found'),
   JWT_SECRET: z.string().default('change-me-to-a-long-random-string'),
   JWT_EXPIRES_IN: z.string().default('7d'),
   CLIENT_URL: z.string().default('http://localhost:5173'),
