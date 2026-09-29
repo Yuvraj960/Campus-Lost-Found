@@ -203,3 +203,13 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Documented `RATE_LIMIT_ENABLED` and `RATE_LIMIT_MAX` usage and configuration in `README.md`.
 - Added unit tests in `server/tests/rateLimit.test.js` verifying default values, bypassed rate limiting when off, and enforcement when enabled.
 - All 116 tests passing (88 backend + 28 frontend), lint passes, and production build succeeds.
+
+## 2026-09-29 — Production Hardening — Environment-based demo credentials & filler toggle
+- Removed hardcoded testing filler / quick-login credentials from the production client view:
+  - Updated `client/src/pages/Login.jsx` to dynamically toggle the "Demo Credentials (Click to prefill)" section based on `VITE_SHOW_DEMO_CREDENTIALS` (or `import.meta.env.DEV` / test runner).
+  - In production builds (`npm run build` / deployed on Vercel), `VITE_SHOW_DEMO_CREDENTIALS` defaults to `false`, hiding the filler accounts completely from public production visitors.
+  - In local development mode (`npm run dev` or cloned from GitHub using `client/.env.example`), `VITE_SHOW_DEMO_CREDENTIALS=true` keeps prefill credentials visible for convenient local testing.
+- Updated `client/.env.example` and `client/.env` with `VITE_SHOW_DEMO_CREDENTIALS=true` and `VITE_USE_MOCK=false`.
+- Documented `VITE_SHOW_DEMO_CREDENTIALS` in `README.md` under Client environment variables.
+- Verified all 117 automated tests (89 backend + 28 frontend) pass, ESLint passes with 0 errors, and production build compiles cleanly.
+

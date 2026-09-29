@@ -149,6 +149,7 @@ To enable rate limiting in production or staging environments:
 |---|---|---|
 | `VITE_API_URL` | Base endpoint for Express API | `http://localhost:5000/api` |
 | `VITE_USE_MOCK` | Toggle frontend mock data fallback (`true`/`false`) | `false` |
+| `VITE_SHOW_DEMO_CREDENTIALS` | Toggle demo/filler credentials on login page (`true` in dev, `false` in prod) | `true` (dev) / `false` (prod) |
 
 ---
 

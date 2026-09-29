@@ -20,6 +20,12 @@ export default function Login() {
   const navigate = useNavigate();
   const redirect = searchParams.get('redirect') || '/dashboard';
 
+  // Toggle demo credentials based on environment variable or dev mode (hidden in production)
+  const showDemoCredentials =
+    import.meta.env.VITE_SHOW_DEMO_CREDENTIALS !== undefined
+      ? import.meta.env.VITE_SHOW_DEMO_CREDENTIALS === 'true'
+      : import.meta.env.DEV || import.meta.env.MODE === 'test';
+
   const {
     register,
     handleSubmit,
@@ -100,38 +106,40 @@ export default function Login() {
             </Button>
           </form>
 
-          {/* Quick Demo Logins */}
-          <div className="pt-4 border-t border-slate-100">
-            <p className="text-2xs font-semibold text-slate-400 uppercase tracking-wider mb-2 text-center">
-              Demo Credentials (Click to prefill)
-            </p>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('john.doe@campus.test')}
-                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-left flex items-center gap-1.5 transition cursor-pointer"
-              >
-                <User className="w-3.5 h-3.5 text-indigo-600" />
-                <span className="truncate">Student (John)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('priya.sharma@campus.test')}
-                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-left flex items-center gap-1.5 transition cursor-pointer"
-              >
-                <User className="w-3.5 h-3.5 text-indigo-600" />
-                <span className="truncate">Student (Priya)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin@campus.test', 'Admin@12345')}
-                className="col-span-2 p-2 rounded-xl border border-indigo-200 bg-indigo-50/50 hover:bg-indigo-100/50 text-left flex items-center gap-1.5 transition cursor-pointer text-indigo-900"
-              >
-                <Shield className="w-3.5 h-3.5 text-indigo-600" />
-                <span className="font-semibold">Administrator (Sarah Jenkins)</span>
-              </button>
+          {/* Quick Demo Logins (Visible in development mode only) */}
+          {showDemoCredentials && (
+            <div className="pt-4 border-t border-slate-100">
+              <p className="text-2xs font-semibold text-slate-400 uppercase tracking-wider mb-2 text-center">
+                Demo Credentials (Click to prefill)
+              </p>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <button
+                  type="button"
+                  onClick={() => handleQuickLogin('john.doe@campus.test')}
+                  className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-left flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <User className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="truncate">Student (John)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickLogin('priya.sharma@campus.test')}
+                  className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-left flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <User className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="truncate">Student (Priya)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickLogin('admin@campus.test', 'Admin@12345')}
+                  className="col-span-2 p-2 rounded-xl border border-indigo-200 bg-indigo-50/50 hover:bg-indigo-100/50 text-left flex items-center gap-1.5 transition cursor-pointer text-indigo-900"
+                >
+                  <Shield className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="font-semibold">Administrator (Sarah Jenkins)</span>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
