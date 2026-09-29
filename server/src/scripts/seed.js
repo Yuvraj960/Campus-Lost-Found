@@ -19,13 +19,17 @@ import {
   REPORT_STATUS,
 } from '../constants/enums.js';
 
+import { resolveMongoUri } from '../utils/resolveMongoUri.js';
+
 export const seedDatabase = async (customUri = null) => {
-  const targetUri =
+  const rawUri =
     customUri ||
     process.argv[2] ||
     process.env.MONGODB_URI ||
     process.env.MONGO_URI ||
     env.MONGODB_URI;
+
+  const targetUri = resolveMongoUri(rawUri);
 
   const isRemote =
     targetUri.includes('mongodb+srv') ||

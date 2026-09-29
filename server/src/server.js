@@ -3,13 +3,17 @@ import app from './app.js';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 
+import { resolveMongoUri } from './utils/resolveMongoUri.js';
+
 const startServer = async () => {
   try {
     if (env.MONGODB_URI) {
+      const activeMongoUri = resolveMongoUri(env.MONGODB_URI);
+      const maskedUri = activeMongoUri.replace(/:([^:@]{3,})@/, ':****@');
       mongoose
-        .connect(env.MONGODB_URI)
+        .connect(activeMongoUri)
         .then(() => {
-          logger.info(`Connected to MongoDB at ${env.MONGODB_URI}`);
+          logger.info(`Connected to MongoDB at ${maskedUri}`);
         })
         .catch((err) => {
           logger.warn(`MongoDB connection failed: ${err.message}. Running without DB for now.`);
