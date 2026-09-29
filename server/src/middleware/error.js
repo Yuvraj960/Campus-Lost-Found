@@ -67,10 +67,14 @@ export const errorHandler = (err, req, res, _next) => {
     details = null;
   }
 
-  logger.error(`${req.method} ${req.originalUrl} - ${statusCode} [${code}]: ${message}`, {
-    stack: err.stack,
-    details,
-  });
+  if (statusCode < 500) {
+    logger.warn(`${req.method} ${req.originalUrl} - ${statusCode} [${code}]: ${message}`);
+  } else {
+    logger.error(`${req.method} ${req.originalUrl} - ${statusCode} [${code}]: ${message}`, {
+      stack: err.stack,
+      details,
+    });
+  }
 
   return errorResponse(res, statusCode, code, message, details);
 };

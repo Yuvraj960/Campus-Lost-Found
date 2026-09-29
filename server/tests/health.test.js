@@ -10,6 +10,16 @@ describe('GET /api/health', () => {
     expect(typeof res.body.data.uptime).toBe('number');
   });
 
+  it('should return 200 for root GET / and HEAD / (Render health check)', async () => {
+    const getRes = await request(app).get('/');
+    expect(getRes.status).toBe(200);
+    expect(getRes.body.success).toBe(true);
+    expect(getRes.body.data.status).toBe('ok');
+
+    const headRes = await request(app).head('/');
+    expect(headRes.status).toBe(200);
+  });
+
   it('should return 404 for unknown route in standardized envelope', async () => {
     const res = await request(app).get('/api/non-existent-endpoint');
     expect(res.status).toBe(404);

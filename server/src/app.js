@@ -44,7 +44,8 @@ if (env.NODE_ENV !== 'test') {
 app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ extended: true, limit: '100kb' }));
 
-// Health route (public, independent of database)
+// Health routes (public, independent of database)
+app.use('/', healthRouter);
 app.use('/api', healthRouter);
 
 // API routes
