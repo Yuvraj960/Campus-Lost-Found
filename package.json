@@ -10,7 +10,7 @@
     "build": "npm --prefix client run build",
     "lint": "npm --prefix server run lint && npm --prefix client run lint",
     "test": "npm --prefix server test && npm --prefix client test",
-    "seed": "npm --prefix server run seed"
+    "seed": "node server/src/scripts/seed.js"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

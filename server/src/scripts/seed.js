@@ -19,27 +19,44 @@ import {
   REPORT_STATUS,
 } from '../constants/enums.js';
 
-export const seedDatabase = async () => {
+export const seedDatabase = async (customUri = null) => {
+  const targetUri =
+    customUri ||
+    process.argv[2] ||
+    process.env.MONGODB_URI ||
+    process.env.MONGO_URI ||
+    env.MONGODB_URI;
+
+  const isRemote =
+    targetUri.includes('mongodb+srv') ||
+    (!targetUri.includes('localhost') && !targetUri.includes('127.0.0.1'));
+
+  const maskedUri = targetUri.replace(/:([^:@]{3,})@/, ':****@');
+  logger.info(`Attempting to connect to database (${maskedUri})...`);
+
   let memServer = null;
-  logger.info(`Attempting to connect to database (${env.MONGODB_URI})...`);
 
   try {
-    await mongoose.connect(env.MONGODB_URI, { serverSelectionTimeoutMS: 2500 });
-    logger.info('Connected to configured MongoDB URI.');
+    await mongoose.connect(targetUri, {
+      serverSelectionTimeoutMS: isRemote ? 30000 : 3000,
+    });
+    logger.info(`Connected to ${isRemote ? 'remote MongoDB Atlas' : 'local MongoDB'} successfully.`);
   } catch (err) {
     if (
-      err.message.includes('ECONNREFUSED') ||
-      err.name === 'MongooseServerSelectionError' ||
-      err.name === 'MongoServerSelectionError'
+      !isRemote &&
+      (err.message.includes('ECONNREFUSED') ||
+        err.name === 'MongooseServerSelectionError' ||
+        err.name === 'MongoServerSelectionError')
     ) {
       logger.warn(
-        `Local MongoDB is not running on ${env.MONGODB_URI}. Spawning temporary in-memory MongoDB to verify seeding...`
+        `Local MongoDB is not running on ${maskedUri}. Spawning temporary in-memory MongoDB to verify seeding...`
       );
       const { MongoMemoryServer } = await import('mongodb-memory-server');
       memServer = await MongoMemoryServer.create();
       await mongoose.connect(memServer.getUri());
       logger.info('Connected to in-memory MongoDB instance for validation.');
     } else {
+      logger.error(`MongoDB connection failed: ${err.message}`);
       throw err;
     }
   }
@@ -590,10 +607,11 @@ export const seedDatabase = async () => {
 
 // Execute if run directly from CLI
 if (process.argv[1]?.endsWith('seed.js')) {
-  seedDatabase()
+  const cliUri = process.argv[2] || null;
+  seedDatabase(cliUri)
     .then(() => process.exit(0))
     .catch((err) => {
-      console.error('Seed failed:', err);
+      console.error('Seed failed:', err.message || err);
       process.exit(1);
     });
 }
