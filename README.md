@@ -129,11 +129,20 @@ docker compose up --build
 | `CLIENT_URL` | Allowed CORS origin | `http://localhost:5173` |
 | `MONGO_URI` | MongoDB connection URI | `mongodb://localhost:27017/campus-lost-found` |
 | `JWT_SECRET` | Secret key for signing HS256 tokens (min 32 chars) | — |
+| `RATE_LIMIT_ENABLED` | Toggle rate limiting on/off (`true`/`false`) | `false` |
+| `RATE_LIMIT_MAX` | Max allowed requests per 15-min window when rate limiting is enabled | `100` |
 | `GEMINI_API_KEY` | Google Gemini API key (blank enables heuristic fallback) | — |
 | `GEMINI_MODEL` | Gemini model identifier | `gemini-2.5-flash` |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary account cloud name | — |
 | `CLOUDINARY_API_KEY` | Cloudinary API Key | — |
 | `CLOUDINARY_API_SECRET` | Cloudinary API Secret | — |
+
+#### Rate Limiting Configuration
+Rate limiting is **disabled by default (`RATE_LIMIT_ENABLED=false`)** to prevent request throttling during local development, browsing, and frontend testing.
+
+To enable rate limiting in production or staging environments:
+1. Set `RATE_LIMIT_ENABLED=true` in `server/.env`.
+2. Configure `RATE_LIMIT_MAX` (default `100`) to define the maximum requests permitted per IP per 15-minute window. Endpoint-specific limiters (mutations, auth, AI assistance, rematch) scale proportionally with this configured threshold.
 
 ### Client (`client/.env`)
 | Variable | Description | Default |

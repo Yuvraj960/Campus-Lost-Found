@@ -20,6 +20,14 @@ const envSchema = z.object({
   FALLBACK_MATCH_THRESHOLD: z.coerce.number().default(60),
   ADMIN_EMAIL: z.string().email().default('admin@campus.test'),
   ADMIN_PASSWORD: z.string().default('Admin@12345'),
+  RATE_LIMIT_ENABLED: z
+    .preprocess((val) => {
+      if (val === undefined || val === '') return false;
+      if (typeof val === 'string') return val.toLowerCase() === 'true';
+      return Boolean(val);
+    }, z.boolean())
+    .default(false),
+  RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
 });
 
 const parsed = envSchema.safeParse(process.env);

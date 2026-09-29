@@ -1,12 +1,14 @@
 import rateLimit from 'express-rate-limit';
 import { env } from '../config/env.js';
 
+const isRateLimitSkipped = () => !env.RATE_LIMIT_ENABLED || env.NODE_ENV === 'test';
+
 export const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requests per IP per 15 minutes
+  max: env.RATE_LIMIT_MAX, // Configurable limit per IP per 15 minutes
   standardHeaders: true,
   legacyHeaders: false,
-  skip: () => env.NODE_ENV === 'test',
+  skip: isRateLimitSkipped,
   handler: (_req, res) => {
     res.status(429).json({
       success: false,
@@ -20,10 +22,10 @@ export const globalLimiter = rateLimit({
 
 export const mutationLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // 20 mutation requests per 15 minutes
+  max: Math.max(1, Math.round(env.RATE_LIMIT_MAX * 0.2)), // 20% of window limit for mutations
   standardHeaders: true,
   legacyHeaders: false,
-  skip: () => env.NODE_ENV === 'test',
+  skip: isRateLimitSkipped,
   handler: (_req, res) => {
     res.status(429).json({
       success: false,
@@ -37,10 +39,10 @@ export const mutationLimiter = rateLimit({
 
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // 10 attempts per IP
+  max: Math.max(1, Math.round(env.RATE_LIMIT_MAX * 0.1)), // 10% of window limit for auth attempts
   standardHeaders: true,
   legacyHeaders: false,
-  skip: () => env.NODE_ENV === 'test',
+  skip: isRateLimitSkipped,
   handler: (req, res) => {
     res.status(429).json({
       success: false,
@@ -54,10 +56,10 @@ export const authLimiter = rateLimit({
 
 export const aiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // 20 requests per 15 minutes
+  max: Math.max(1, Math.round(env.RATE_LIMIT_MAX * 0.2)), // 20% of window limit for AI requests
   standardHeaders: true,
   legacyHeaders: false,
-  skip: () => env.NODE_ENV === 'test',
+  skip: isRateLimitSkipped,
   handler: (req, res) => {
     res.status(429).json({
       success: false,
@@ -71,10 +73,10 @@ export const aiLimiter = rateLimit({
 
 export const rematchLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5, // 5 rematch runs per hour
+  max: Math.max(1, Math.round(env.RATE_LIMIT_MAX * 0.05)), // 5% of window limit for rematch triggers
   standardHeaders: true,
   legacyHeaders: false,
-  skip: () => env.NODE_ENV === 'test',
+  skip: isRateLimitSkipped,
   handler: (req, res) => {
     res.status(429).json({
       success: false,

@@ -193,5 +193,13 @@ Append newest entry at the bottom: `## YYYY-MM-DD — Phase N — summary`, then
 - Deviations from docs: None.
 - All 11 phases (Phases 0 through 10) are completed.
 
-
-
+## 2026-09-29 — Maintenance / Bugfix — Rate limiting toggle and environment configuration
+- Addressed `ERR_CONNECTION_REFUSED` on `GET /api/items`: explained that local dev server was not active on port 5000 (backend not launched via `npm run dev` or mock mode `VITE_USE_MOCK=true` disabled).
+- Introduced two environment variables:
+  - `RATE_LIMIT_ENABLED` (boolean, defaults to `false` / OFF): controls whether rate limiting middleware is active across the application.
+  - `RATE_LIMIT_MAX` (positive integer, defaults to `100`): sets the maximum request threshold per 15-minute window when rate limiting is enabled.
+- Updated `server/src/middleware/rateLimiter.js` to skip rate limiting when `!env.RATE_LIMIT_ENABLED` (bypassed by default for local development), and dynamically apply `RATE_LIMIT_MAX` across global and proportional action limiters.
+- Updated `server/.env.example`, `server/.env`, and `docker-compose.yml`.
+- Documented `RATE_LIMIT_ENABLED` and `RATE_LIMIT_MAX` usage and configuration in `README.md`.
+- Added unit tests in `server/tests/rateLimit.test.js` verifying default values, bypassed rate limiting when off, and enforcement when enabled.
+- All 116 tests passing (88 backend + 28 frontend), lint passes, and production build succeeds.
