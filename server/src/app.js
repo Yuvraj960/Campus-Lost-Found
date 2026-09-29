@@ -24,10 +24,27 @@ app.disable('x-powered-by');
 // Security headers
 app.use(helmet());
 
-// CORS limited to CLIENT_URL
+// CORS configuration: support exact match, stripped trailing slashes, and comma-separated origins
+const allowedOrigins = (env.CLIENT_URL || '')
+  .split(',')
+  .map((url) => url.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: env.CLIENT_URL,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (curl, mobile, server-to-server)
+      if (!origin) return callback(null, true);
+      const normalizedOrigin = origin.replace(/\/+$/, '');
+      if (
+        allowedOrigins.length === 0 ||
+        allowedOrigins.includes(normalizedOrigin) ||
+        allowedOrigins.includes('*')
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    },
     credentials: true,
   })
 );

@@ -11,7 +11,10 @@ const envSchema = z.object({
     .default(() => process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/campus-lost-found'),
   JWT_SECRET: z.string().default('change-me-to-a-long-random-string'),
   JWT_EXPIRES_IN: z.string().default('7d'),
-  CLIENT_URL: z.string().default('http://localhost:5173'),
+  CLIENT_URL: z
+    .string()
+    .default('http://localhost:5173')
+    .transform((url) => url.trim().replace(/\/+$/, '')),
   ALLOWED_EMAIL_DOMAIN: z.string().optional().default(''),
   CLOUDINARY_CLOUD_NAME: z.string().optional().default(''),
   CLOUDINARY_API_KEY: z.string().optional().default(''),
